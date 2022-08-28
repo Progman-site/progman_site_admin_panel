@@ -1,0 +1,209 @@
+.authorization {
+    margin-top: 100px;
+    text-align: center;
+}
+
+.authorization input {
+    margin: 10px auto;
+    padding: 10px 20px;
+    font-size: 16px;
+    border: 2px gray solid;
+    border-radius: 5px;
+}
+
+button[type="submit"] {
+    padding: 5px 50px;
+    font-size: 14px;
+    border-radius: 10px;
+    font-weight: bold;
+    background: lightblue;
+    cursor: pointer;
+    margin-bottom: 60px;
+}
+
+.reset {
+    text-align: right;
+}
+
+.reset button{
+    font-size: 12px;
+}
+
+.edit_panel {
+    text-align: center;
+    padding: 0 30px;
+}
+
+.edit_panel > div {
+    margin: 30px auto;
+    background: #98a6a8;
+    border-radius: 20px;
+    padding: 20px;
+}
+
+.edit_panel > div:nth-child(even) {
+    background: #c1d5d7;
+}
+
+.edit_panel ul {
+    list-style: none;
+    padding: 0;
+}
+.edit_panel h3 {
+    text-transform: uppercase;
+}
+.edit_panel li:nth-child(n) {
+    background: #c1d5d7;
+    margin: 5px 0;
+    border-radius: 10px;
+}
+
+.edit_panel li:nth-child(odd) {
+    background: #98a6a8;
+}
+
+.edit_panel li > label {
+    font-weight: bold;
+    display: flex;
+    justify-content: space-around;
+    width: 80%;
+}
+
+.edit_panel li > label > span:first-child {
+    width: 100px;
+}
+.edit_panel li > label > span:only-child, .edit_panel li > label > select:only-child {
+    margin: 20px;
+}
+
+.edit_panel input[type="text"], input[type="number"], .edit_panel textarea {
+    width: 90%;
+    padding: 10px 20px;
+    margin-top: 10px;
+    border-radius: 15px;
+    font-size: 12px;
+}
+.price_list input[type="text"], .price_list input[type="number"] {
+    width: auto;
+}
+.price_list input[type="number"] {
+    width: 60px;
+    padding: 5px 10px;
+}
+.price_list input[type="text"] {
+    width: 250px;
+
+}
+.price_list th {
+    background: #c1d5d7;
+    text-align: center;
+}
+.price_list td {
+    text-align: center;
+}
+input:disabled, textarea:disabled {
+    background: #cecece;
+    color: gray;
+}
+.edit_panel input[type="text"] {
+    font-weight: bold;
+}
+
+.edit_panel textarea {
+    height: 70px;
+}
+
+.edit_panel textarea {
+    height: 70px;
+}
+
+.image_editor {
+    width: 70%;
+    margin: 20px auto;
+}
+
+.image_editor img {
+    width: 80%;
+    border: gold;
+    margin-bottom: 30px;
+}
+.image_editor input[type="file"] {
+    font-size: 14px;
+    padding: 20px;
+}
+.image_editor input[type="file"] > input[type="button"] {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.price_list .image_editor {
+    width: auto;
+    margin: 5px;
+}
+
+.price_list .image_editor img {
+    width: 100px;
+    margin: 5px;
+
+}
+.price_list table {
+    margin: 10px auto 100px auto;
+}
+.price_list td {
+    padding: 25px 5px;
+}
+.price_list tr {
+    background: aliceblue;
+}
+.price_list tr:hover {
+    background: #cfebef;
+}
+.checkbox_list label:has(input:checked) {
+    background: #95e59a !important;
+}
+
+.deleter {
+    cursor: pointer;
+    background: rosybrown;
+    color: darkred;
+    font-size: 10px;
+    margin-top: 10px;
+}
+#new_price_item {
+    background: #eefaee;
+    height: 100px;
+}
+.changer {
+    cursor: pointer;
+    font-size: 11px;
+    text-transform: uppercase;
+}
+#new_price_item button {
+    font-size: 12px;
+    background: #d3fcd3;
+}
+select[name="certificates__course"] {
+    zoom: 1.6;
+    font-weight: 700;
+    color: #015959;
+
+}
+.checkbox_list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+.checkbox_list label{
+    text-align: left;
+    cursor: pointer;
+    padding: 5px 10px 5px 3px;
+    border: 1px green solid;
+    border-radius: 10px;
+    margin: 10px;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    white-space: nowrap;
+}
+.checkbox_list input[type='checkbox'] {
+    margin-right: 3px;
+    zoom: 1.4;
+}
