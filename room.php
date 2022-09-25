@@ -54,74 +54,108 @@
     </form>
     <div class="edit_panel price_list">
         <h3>Управление сертификатами</h3>
-        <table>
-            <tr>
-                <th>#</th>
-                <th>main info</th>
-                <th>course/technologies</th>
-                <th>action</th>
-            </tr>
-            <tr id="new_price_item">
-                <td><b>N</b></td>
-                <td>
-                    <input type="text" class="search_field" name="users__tg_name" data-field="tg_name" placeholder="telegram nikname" required><br>
-                    <input type="text" class="search_field" name="users__tg_id" data-field="tg_id" placeholder="telegram id" required><br>
-                    <input type="text" name="users__real_last_name" placeholder="Реальная фамилия" required><br>
-                    <input type="text" name="users__real_first_name" placeholder="Реальное имя" required><br>
-                    <input type="text" name="users__real_middle_name" placeholder="Реальное отчество">
-                    <br><br>
-                    <label>Hours: <input type="number" name="certificates__hours" placeholder="кол-во часов" ></label>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    <label>Lang:
-                        <select name="certificates__language">
-                            <option value="EN">EN</option>
-                            <option value="RU">RU</option>
-                        </select>
-                    </label>
-                    &nbsp;&nbsp;
-                    <label>Blank:
-                        <select name="certificates__blank">
-                            <option value="EN">en</option>
-                            <option value="RU">ru</option>
-                        </select>
-                    </label>
-                    <br><br>
-                    <textarea name="certificates__description" cols="30" rows="10" placeholder="Особые отметки"></textarea>
-                </td>
-                <td>
-                    <select name="certificates__course">
-                        <option>Course</option>
-                        <?php foreach ($courses as $course) { ?>
-                            <option data-type="<?= $course["type"]?>" data-level="<?= $course["level"]?>" data-technologies="<?= $course["technologies"] ?>" data-technologies_ids="<?= $course["technologies_ids"] ?>" data-technologies_descriptions="<?= $course["technologies_descriptions"] ?>" value="<?= $course["id"] ?>"><?= $course["name"] ?></option>
-                        <?php } ?>
+        <div id="new_price_item">
+            <b>N</b>
+            <div>
+                <input type="text" class="search_field" name="users__tg_name" data-field="tg_name" placeholder="telegram nikname" required><br>
+                <input type="text" class="search_field" name="users__tg_id" data-field="tg_id" placeholder="telegram id" required><br>
+                <input type="text" name="users__real_last_name" placeholder="Реальная фамилия" required><br>
+                <input type="text" name="users__real_first_name" placeholder="Реальное имя" required><br>
+                <input type="text" name="users__real_middle_name" placeholder="Реальное отчество">
+                <br><br>
+                <label>Hours: <input type="number" name="certificates__hours" placeholder="кол-во часов" ></label>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <label>Lang:
+                    <select name="certificates__language">
+                        <option value="EN">EN</option>
+                        <option value="RU">RU</option>
                     </select>
-                    <br>
-                    <strong>тип: <span class="course_type"></span></strong>
-                    &nbsp;&nbsp;
-                    <strong>Level: <span class="course_level"></span></strong>
-                    <h4>Technologies:</h4>
-                    <div class="checkbox_list"></div>
-                </td>
-                <td>
-                    <button class="changer" data-task="save" data-id="">ВЫДАТЬ</button>
-                </td>
-            </tr>
-            <?php $count = 0; foreach ($certificates as $item) { $count++; ?>
-                <tr>
-                    <td><b><?= $count?>) </b></td>
-                    <td>
-                        <h3><?= $item["full_number"] ?></h3>
-                        <input type="hidden" name="certificates__id" data-field="id" value="<?= $item["id"] ?>">
+                </label>
+                &nbsp;&nbsp;
+                <label>Blank:
+                    <select name="certificates__blank">
+                        <option value="EN">en</option>
+                        <option value="RU">ru</option>
+                    </select>
+                </label>
+                <br><br>
+                <textarea name="certificates__description" cols="30" rows="10" placeholder="Особые отметки"></textarea>
+            </div>
+            <div>
+                <select name="certificates__course">
+                    <option>Course</option>
+                    <?php foreach ($courses as $course) { ?>
+                        <option data-type="<?= $course["type"]?>" data-level="<?= $course["level"]?>" data-technologies="<?= $course["technologies"] ?>" data-technologies_ids="<?= $course["technologies_ids"] ?>" data-technologies_descriptions="<?= $course["technologies_descriptions"] ?>" value="<?= $course["id"] ?>"><?= $course["name"] ?></option>
+                    <?php } ?>
+                </select>
+                <br>
+                <strong>тип: <span class="course_type"></span></strong>
+                &nbsp;&nbsp;
+                <strong>Level: <span class="course_level"></span></strong>
+                <h4>Technologies:</h4>
+                <div class="checkbox_list"></div>
+            </div>
+            <div>
+                <button class="changer" data-task="save" data-id="">ВЫДАТЬ</button>
+            </div>
+        </div>
+
+        <?php $count = 0; foreach ($certificates as $item) { ?>
+            <details open>
+                <summary><b><?= $count?>) </b> Skills and certificate</summary>
+                <div data-form_name="user_data">
+                    <div>
                         <input type="hidden" name="users__tg_name" data-field="tg_name" value="<?= $item["tg_name"] ?>">
                         <input type="hidden" name="users__tg_id" data-field="tg_id" value="<?= $item["tg_id"] ?>">
-                        <input type="hidden" name="users__tg_id" data-field="tg_id" value="<?= $item["tg_id"] ?>">
-                        <span><?= date('d-m-Y', strtotime($item["date"])) ?></span>
+                        <span>Start: <?= date('d-m-Y', strtotime($item["date"])) ?></span>
                         <br><br>
                         <label>Tg nick: <b><?= $item["tg_name"] ?></b></label><br>
                         <label>Tg DI: <b><?= $item["tg_id"] ?></b></label><br>
                         <input type="text" name="users__real_last_name" placeholder="Реальная фамилия" value="<?= $item["real_last_name"] ?>" required disabled><br>
                         <input type="text" name="users__real_first_name" placeholder="Реальное имя" value="<?= $item["real_first_name"] ?>" required disabled><br>
                         <input type="text" name="users__real_middle_name" placeholder="Реальное отчество" value="<?= $item["real_middle_name"] ?>" disabled>
+                    </div>
+                    <div>
+                        <textarea name="user__notes" cols="30" rows="10" placeholder="Заметки по пользователю" disabled><?= null ?></textarea>
+                    </div>
+                    <div>
+                        <button class="changer" data-task="change" data-id="<?= $item['id']?>">изменить</button>
+                    </div>
+                </div>
+            </details>
+            <details open>
+                <summary><b><?= $count?>) </b>Lessons journal</summary>
+                <div>
+                    <div>
+                        <select name="certificates__course">
+                            <option>Course</option>
+                            <?php foreach ($courses as $course) { ?>
+                                <option data-type="<?= $course["type"]?>" data-level="<?= $course["level"]?>" data-technologies="<?= $course["technologies"] ?>" data-technologies_ids="<?= $course["technologies_ids"] ?>" data-technologies_descriptions="<?= $course["technologies_descriptions"] ?>" value="<?= $course["id"] ?>"><?= $course["name"] ?></option>
+                            <?php } ?>
+                        </select>
+                        <span>Date <?= date('d-m-Y', strtotime($item["date"])) ?></span>
+                        <br><br>
+                        <label>Tg nick: <b><?= $item["tg_name"] ?></b></label><br>
+                        <label>Tg DI: <b><?= $item["tg_id"] ?></b></label><br>
+                        <input type="text" name="users__real_last_name" placeholder="Реальная фамилия" value="<?= $item["real_last_name"] ?>" required disabled><br>
+                        <input type="text" name="users__real_first_name" placeholder="Реальное имя" value="<?= $item["real_first_name"] ?>" required disabled><br>
+                        <input type="text" name="users__real_middle_name" placeholder="Реальное отчество" value="<?= $item["real_middle_name"] ?>" disabled>
+                    </div>
+                    <div>
+                        <textarea name="user__notes" cols="30" rows="10" placeholder="Заметки по пользователю" disabled><?= null ?></textarea>
+                    </div>
+                    <div>
+                        <button class="changer" data-task="change" data-id="<?= $item['id']?>">изменить</button>
+                    </div>
+                </div>
+            </details>
+            <details>
+                <summary>Skills and certificate</summary>
+                <div>
+                    <div>
+                        <h3><?= $item["full_number"] ?></h3>
+                        <input type="hidden" name="certificates__id" data-field="id" value="<?= $item["id"] ?>">
+                        <span><?= date('d-m-Y', strtotime($item["date"])) ?></span>
                         <br><br>
                         <label>Hours: <input type="number" name="certificates__hours" placeholder="кол-во часов" value="<?= $item["hours"] ?>" disabled></label>
                         <label>Lang: <b><?= $item["language"] ?></b></label>
@@ -134,8 +168,8 @@
                         </label>
                         <br>
                         <textarea name="certificates__description" cols="30" rows="10" placeholder="Особые отметки" disabled><?= $item["description"] ?></textarea><br>
-                    </td>
-                    <td>
+                    </div>
+                    <div>
                         Course:&nbsp;
                         <strong style="background: "><?= $item['course'] ?></strong>
                         <h5>Technologies:</h5>
@@ -147,17 +181,17 @@
                                 </label>
                             <?php } ?>
                         </div>
-                    </td>
-                    <td>
+                    </div>
+                    <div>
                         <button class="changer" data-task="change" data-id="<?= $item['id']?>">изменить</button>
                         <br/>
                         <button class="deleter" data-id=<?= $item['id']?>>удалить</button>
                         <br/><br/><br/><br/><br/>
-                        <button title="Загрузка графического файла сертификата" onclick="downloadCertificate(<?= $item['id']?>, this.parentNode.parentNode)">СКАЧАТЬ</button>
-                    </td>
-                </tr>
-            <?php } ?>
-        </table>
+                        <button title="Загрузка графического файла сертификата" onclick="downloadCertificate(<?= $item['id']?>, this.parentNode)">СКАЧАТЬ</button>
+                    </div>
+                </div>
+            </details>
+        <?php } ?>
     </div>
 <?php } ?>
     <script src="js/admin_main.js"></script>

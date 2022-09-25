@@ -13,29 +13,29 @@ if (!isset($_SESSION['authorization'])) {
 $connect = sqlConnect();
 
 try {
-    if (@$_POST['form_name'] == 'updateCertificates') {
-        unset($_POST['form_name']);
-        updateCertificate();
-        exit();
+    $formName = $_POST['form_name'];
+    unset($_POST['form_name']);
+
+    switch($formName) {
+        case 'updateCertificates':
+            unset($_POST['form_name']);
+            updateCertificate();
+            break;
+        case 'userSearch':
+            printResult(getUserByFieldName($_POST['field'], $_POST['value']));
+            break;
+        case 'delCertificate':
+            delCertificate((int)$_POST['id']);
+            break;
+        case 'downloadCertificate':
+            printResult(downloadCertificate($_POST['id']));
+            break;
     }
-    elseif (@$_POST['form_name'] == 'userSearch') {
-        unset($_POST['form_name']);
-        printResult(getUserByFieldName($_POST['field'], $_POST['value']));
-    }
-    elseif (@$_POST['form_name'] == 'delCertificate') {
-        unset($_POST['form_name']);
-        delCertificate((int) $_POST['id']);
-    }
-    elseif (@$_POST['form_name'] == 'downloadCertificate') {
-        unset($_POST['form_name']);
-        printResult(downloadCertificate($_POST['id']));
-    }
-//    ?form_name=getCertificateImg&id=1&language=en
 } catch (Throwable $e) {
     printError([
         'message' => $e->getMessage(),
         'string' => $e->getLine(),
         'file' => $e->getFile(),
         'trace' => $e->getTrace(),
-        ]);
+    ]);
 }

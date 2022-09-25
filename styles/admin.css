@@ -34,11 +34,16 @@ button[type="submit"] {
     padding: 0 30px;
 }
 
-.edit_panel > div {
+.edit_panel > details > div {
+    display: grid;
+    grid-template-columns: auto auto 125px;
     margin: 30px auto;
     background: #98a6a8;
     border-radius: 20px;
     padding: 20px;
+}
+.edit_panel > div > * {
+    margin: 20px;
 }
 
 .edit_panel > div:nth-child(even) {
@@ -171,7 +176,6 @@ input:disabled, textarea:disabled {
 }
 #new_price_item {
     background: #eefaee;
-    height: 100px;
 }
 .changer {
     cursor: pointer;

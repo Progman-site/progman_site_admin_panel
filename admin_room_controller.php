@@ -13,8 +13,9 @@ if (@trim($_POST['login']) && @trim($_POST['password'])) {
 } elseif (@$_POST['reset']) {
     unset($_SESSION['authorization']);
     session_destroy();
-} elseif (isset($_SESSION['authorization'])) {
-    unset($_POST['form_name']);
+}
+
+if (isset($_SESSION['authorization'])) {
     $courses = getCourses();
     $certificates = getCertificates();
 }
