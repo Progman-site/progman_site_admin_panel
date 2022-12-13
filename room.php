@@ -30,24 +30,28 @@
     <form class="edit_panel" method="post" enctype="multipart/form-data">
         <h3>Основные настройки</h3>
         <input type="hidden" name="form_name" value="edit">
-        <?php foreach ($siteInfo as $item) { ?>
+        <?php foreach ($siteInfo as $tag => $langs) { ?>
             <div>
-                <label>
-                    <?= $item['name']?>
+            <?php foreach ($langs as $lang => $item) { ?>
+                <div>
+                    <label>
+                        <?= $item['name']?> (<?= $lang?>)
+                    </label>
                     <br>
                     <?php if ($item['type'] == 'string') {?>
-                        <input type="text" name="<?= $item['field']?>" value="<?= $item['value']?>">
+                        <input type="text" name="<?= $item['tag'] . "-" . $lang . "_" . LANG_SESSION_KEY ?>" value="<?= $item[$lang . "_" . LANG_SESSION_KEY]?>">
                     <?php } elseif  ($item['type'] == 'text') { ?>
-                        <textarea  name="<?= $item['field']?>"><?= $item['value']?></textarea>
+                        <textarea  name="<?= $item['tag'] . "-" . $lang . "_" . LANG_SESSION_KEY ?>"><?= $item[$lang . "_" . LANG_SESSION_KEY]?></textarea>
                     <?php } elseif  ($item['type'] == 'image') { ?>
                         <div class="image_editor">
                             <div>
-                                <img src="<?= $item['value']?>">
+                                <img src="<?= $item[$lang . "_" . LANG_SESSION_KEY] ?>">
                             </div>
-                            <input type="file" name="<?= $item['field']?>">
+                            <input type="file" name="<?= $item['tag'] . "-" . $lang . "_" . LANG_SESSION_KEY?>">
                         </div>
                     <?php } ?>
-                </label>
+                </div>
+            <?php } ?>
             </div>
         <?php } ?>
         <button type="submit">СОХРАНИТЬ ИЗМЕНЕНИЯ</button>

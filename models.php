@@ -37,12 +37,24 @@ function sqlQuery(string $query, bool $multiAnswer = true): array|int|bool|null 
     }
     return $multiAnswer ? mysqli_fetch_all($result, MYSQLI_ASSOC) : mysqli_fetch_assoc($result);
 }
-
+function getLanguage(): string {
+    return isset($_SESSION[LANG_SESSION_KEY]) ? LANG_SESSION_KEY : DEFAULT_LANGUAGE;
+}
 function getSiteInfo(): array {
-    $siteInfo = sqlQuery("SELECT * FROM `site_info` WHERE `show` = 1;");
+    $siteInfo = sqlQuery("SELECT * FROM `language_contents` WHERE `show` = 1;");
     $rebuildArray = [];
+    $langs = [];
     foreach ($siteInfo as $item) {
-        $rebuildArray[$item['field']] = $item['value'];
+        if (empty($langs)) {
+            foreach ($item as $field => $fieldValue) {
+                if (str_ends_with($field,'_' . LANG_SESSION_KEY)) {
+                    $langs[] = stristr($field, '_' . LANG_SESSION_KEY, true);
+                }
+            }
+        }
+        foreach ($langs as $lang) {
+            $rebuildArray[$item['tag']][$lang] = $item;
+        }
     }
     return $rebuildArray;
 }
@@ -66,11 +78,17 @@ function updateSiteInfo(): void {
     foreach ($_FILES as $fileInputName => $fileData) {
         $imgPath = "./images/{$_FILES[$fileInputName]['name']}";
         if (move_uploaded_file($_FILES[$fileInputName]['tmp_name'], $imgPath)) {
-            sqlQuery("UPDATE `site_info` SET `value` = '{$imgPath}' WHERE `field` = '{$fileInputName}'");
+            sqlQuery("UPDATE `language_contents` SET `file_url` = '{$imgPath}' WHERE `tag` = '{$fileInputName}'");
         }
     }
+
     foreach ($_POST as $field => $value) {
-        sqlQuery("UPDATE `site_info` SET `value` = '{$value}' WHERE `field` = '{$field}'");
+        print_r($field);
+        echo '<br/>';
+        $fieldParts = explode('-', $field);
+        if (isset($fieldParts[1])) {
+            sqlQuery("UPDATE `language_contents` SET `{$fieldParts[1]}` = '{$value}' WHERE `tag` = '{$fieldParts[0]}'");
+        }
     }
 }
 

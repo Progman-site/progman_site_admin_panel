@@ -46,6 +46,12 @@ button[type="submit"] {
     margin: 20px;
 }
 
+.edit_panel > div {
+    padding: 20px 0;
+    margin-bottom: 20px;
+    background: #8dbec0;
+}
+
 .edit_panel > div:nth-child(even) {
     background: #c1d5d7;
 }

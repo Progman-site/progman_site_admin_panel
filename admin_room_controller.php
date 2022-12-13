@@ -15,9 +15,30 @@ if (@trim($_POST['login']) && @trim($_POST['password'])) {
     session_destroy();
 }
 
-if (isset($_SESSION['authorization'])) {
-    $courses = getCourses();
-    $certificates = getCertificates();
+try {
+    if (isset($_SESSION['authorization'])) {
+            $formName = $_POST['form_name'];
+            unset($_POST['form_name']);
+
+            switch($formName) {
+                case 'edit':
+                    updateSiteInfo();
+                    break;
+                case '_______':
+                    printResult(getUserByFieldName($_POST['field'], $_POST['value']));
+                    break;
+            }
+        $courses = getCourses();
+        $certificates = getCertificates();
+        $siteInfo = getSiteInfo();
+    }
+} catch (Throwable $e) {
+    printError([
+        'message' => $e->getMessage(),
+        'string' => $e->getLine(),
+        'file' => $e->getFile(),
+        'trace' => $e->getTrace(),
+    ]);
 }
 
 if (!isset($_SESSION['authorization']) && isset($_POST['login'])) {
