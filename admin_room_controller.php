@@ -17,10 +17,11 @@ if (@trim($_POST['login']) && @trim($_POST['password'])) {
 
 try {
     if (isset($_SESSION['authorization'])) {
+        if (isset($_POST['form_name'])) {
             $formName = $_POST['form_name'];
             unset($_POST['form_name']);
 
-            switch($formName) {
+            switch ($formName) {
                 case 'edit':
                     updateSiteInfo();
                     break;
@@ -28,6 +29,7 @@ try {
                     printResult(getUserByFieldName($_POST['field'], $_POST['value']));
                     break;
             }
+        }
         $courses = getCourses();
         $certificates = getCertificates();
         $siteInfo = getSiteInfo();

@@ -41,7 +41,7 @@ function getLanguage(): string {
     return isset($_SESSION[LANG_SESSION_KEY]) ? LANG_SESSION_KEY : DEFAULT_LANGUAGE;
 }
 function getSiteInfo(): array {
-    $siteInfo = sqlQuery("SELECT * FROM `language_contents` WHERE `show` = 1;");
+    $siteInfo = sqlQuery("SELECT * FROM `language_contents` ORDER BY `order` DESC;");
     $rebuildArray = [];
     $langs = [];
     foreach ($siteInfo as $item) {
@@ -83,10 +83,9 @@ function updateSiteInfo(): void {
     }
 
     foreach ($_POST as $field => $value) {
-        print_r($field);
-        echo '<br/>';
         $fieldParts = explode('-', $field);
         if (isset($fieldParts[1])) {
+            $value = str_replace("'", "\'", $value);
             sqlQuery("UPDATE `language_contents` SET `{$fieldParts[1]}` = '{$value}' WHERE `tag` = '{$fieldParts[0]}'");
         }
     }
