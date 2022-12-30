@@ -32,6 +32,20 @@ document.querySelectorAll('.changer').forEach(key => {
             event.target.innerText = 'сохранить'
         }
         else if (event.target.dataset.task === 'save') {
+            if (event.target.dataset.id) {
+                if (!confirm(`Вы действительно хотите внести изменения?`)
+                    || prompt('Напишите: да') !== `да`) {
+                    alert("все изменения отменены!")
+                    location.reload()
+                    return false;
+                }
+            } else {
+                if (!confirm(`Вы действительно хотите создать сертификат?`)) {
+                    alert("все изменения отменены!")
+                    location.reload()
+                    return false;
+                }
+            }
             let formData = new FormData();
             formData.append('form_name', 'updateCertificates');
             if (event.target.dataset.id) {
@@ -136,9 +150,9 @@ document.querySelectorAll('.deleter').forEach(key => {
         let id = event.target.dataset.id;
         if (
             !confirm(`вы действительно хотите удалить сертификат #${id}\n из базы безвозвратно?`)
-            && prompt(`Напишите: 'да удалить #${id}'`) !== `да удалить #${id}`
+            || prompt(`Напишите: 'удалить #${id}'`) !== `удалить #${id}`
         ) {
-            alert("!даление отменено!")
+            alert("Удаление отменено!")
             return false;
         }
         let formData = new FormData();
@@ -199,3 +213,4 @@ function downloadCertificate(id, theElement) {
         urlToFile(result.data, theElement)
     })).then(res => console.log(res));
 }
+

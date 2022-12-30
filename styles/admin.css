@@ -1,3 +1,7 @@
+body {
+    margin-bottom: 50px;
+}
+
 .authorization {
     margin-top: 100px;
     text-align: center;
@@ -34,26 +38,55 @@ button[type="submit"] {
     padding: 0 30px;
 }
 
-.edit_panel > details > div {
+@media screen and (max-width: 736px) {
+    .edit_panel {
+        padding: 0;
+    }
+}
+
+.edit_panel.certificates > details > div {
     display: grid;
     grid-template-columns: auto auto 125px;
     margin: 30px auto;
-    background: #98a6a8;
-    border-radius: 20px;
+    background: #87ced4;
     padding: 20px;
 }
-.edit_panel > div > * {
+
+@media screen and (max-width: 736px) {
+    .edit_panel.certificates > details > div {
+        grid-template-columns: auto;
+        padding: 20px 0;
+    }
+}
+
+.edit_panel > details {
+    padding: 3px 0;
+    margin-bottom: 15px;
+    background: #b0e0e2;
+    cursor: pointer;
+    border-radius: 20px;
+}
+
+.edit_panel > details > * {
     margin: 20px;
 }
-
-.edit_panel > div {
-    padding: 20px 0;
-    margin-bottom: 20px;
-    background: #8dbec0;
+@media screen and (max-width: 736px) {
+    .edit_panel > details > * {
+        margin: 20px 0;
+    }
 }
 
-.edit_panel > div:nth-child(even) {
-    background: #c1d5d7;
+.edit_panel > details > summary {
+    margin-bottom: 5px;;
+}
+
+.edit_panel > details[open] {
+    padding: 20px 0;
+    cursor: auto;
+}
+
+.edit_panel > details:nth-child(even) {
+    background: #b3d1df;
 }
 
 .edit_panel ul {
@@ -94,6 +127,15 @@ button[type="submit"] {
     border-radius: 15px;
     font-size: 12px;
 }
+@media screen and (max-width: 736px) {
+    .edit_panel input[type="text"], input[type="number"], .edit_panel textarea {
+        width: 88%;
+        padding: 10px 10px;
+        margin-top: 10px;
+        border-radius: 15px;
+        font-size: 12px;
+    }
+}
 .price_list input[type="text"], .price_list input[type="number"] {
     width: auto;
 }
@@ -121,11 +163,18 @@ input:disabled, textarea:disabled {
 }
 
 .edit_panel textarea {
-    height: 70px;
+    height: 80px;
+    min-height: 70px;
+    resize: vertical;
 }
 
-.edit_panel textarea {
-    height: 70px;
+@media screen and (max-width: 736px) {
+    .edit_panel textarea {
+        height: 100px;
+        min-height: 100px;
+        resize: vertical;
+        width: 90%;
+    }
 }
 
 .image_editor {
@@ -181,7 +230,15 @@ input:disabled, textarea:disabled {
     margin-top: 10px;
 }
 #new_price_item {
-    background: #eefaee;
+    background: #e7fce8;
+    margin-bottom: 30px;
+    padding: 40px;
+    border-radius: 20px;
+}
+@media screen and (max-width: 736px) {
+    #new_price_item {
+        padding: 40px 0;
+    }
 }
 .changer {
     cursor: pointer;
@@ -189,8 +246,15 @@ input:disabled, textarea:disabled {
     text-transform: uppercase;
 }
 #new_price_item button {
+    /*margin: 40px;*/
     font-size: 12px;
-    background: #d3fcd3;
+    background: #c4f6c4;
+    padding: 5px 20px;
+    border-radius: 5px;
+    font-weight: bold;
+}
+#new_price_item button:hover {
+    background: #88f388;
 }
 select[name="certificates__course"] {
     zoom: 1.6;
@@ -201,6 +265,12 @@ select[name="certificates__course"] {
 .checkbox_list {
     display: grid;
     grid-template-columns: 1fr 1fr;
+}
+@media screen and (max-width: 736px) {
+    .checkbox_list {
+        display: grid;
+        grid-template-columns: 1fr;
+    }
 }
 .checkbox_list label{
     text-align: left;
@@ -216,4 +286,20 @@ select[name="certificates__course"] {
 .checkbox_list input[type='checkbox'] {
     margin-right: 3px;
     zoom: 1.4;
+}
+.navigation {
+    margin: 10px auto;
+    text-align: center;
+}
+.navigation input {
+    background: aliceblue;
+    margin: 0 10px;
+    min-width: 100px;
+    font-size: 12px;
+    text-transform: uppercase;
+    cursor: pointer;
+}
+.navigation .pressed {
+    background: #d3fcd3;
+    font-weight: bold;
 }

@@ -30,6 +30,7 @@ try {
                     break;
             }
         }
+        @$_GET['navigation'] = $_GET['navigation'] ?: "certificates";
         $courses = getCourses();
         $certificates = getCertificates();
         $siteInfo = getSiteInfo();

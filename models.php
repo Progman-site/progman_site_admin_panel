@@ -141,14 +141,15 @@ function updateCertificate(): void {
                 `course` = '{$_POST['certificates__course']}',
                 `hours` = '{$_POST['certificates__hours']}',
                 `description` = '{$_POST['certificates__description']}',
-                `language` = '{$_POST['certificates__language']}';
+                `language` = '{$_POST['certificates__language']}',
+                `blank` = '{$_POST['certificates__blank']}';
 ", false);
         $certificate = sqlQuery("SELECT * FROM `certificates` WHERE `id` = '{$certificate}'", false);
 
         if (!@$certificate['id']) {
             throw new Exception("Ошибка при создании сертификата!");
         }
-        $certificateNumber = "{$user['tg_id']}-{$user['id']}-{$certificate['id']}{$_POST['certificates__language']}" . date('Y');
+        $certificateNumber = "{$user['tg_id']}-{$user['id']}-{$certificate['id']}" . strtoupper($_POST['certificates__language']) . date('Y');
         sqlQuery("UPDATE `certificates` SET `full_number` = '{$certificateNumber}' WHERE `id` = '{$certificate['id']}';");
     }
     foreach ($_POST as $keyPost => $onePost) {
