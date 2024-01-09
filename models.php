@@ -6,11 +6,6 @@ use ImageSigner\constants\Colors;
 
 function sqlConnect():mysqli
 {
-    print_r([config("database.host"),
-        config("database.user"),
-        config("database.password"),
-        config("database.name")]);
-    die();
     $dbConnect = mysqli_connect(
         config("database.host"),
         config("database.user"),
