@@ -1,0 +1,61 @@
+name: Deploy to the hosting FTP
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build-deploy:
+    name: 🎉 Build->Deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Sanding the start notification through Telegram
+        run: |
+          curl --get \
+            --data-urlencode 'chat_id=${{vars.TELEGRAM_DEPLOY_NOTICE_RECIPIENT_ID}}' \
+            --data-urlencode "text=🚀Start! ${{github.event.head_commit.message}} (${{github.event.head_commit.id}})" \
+            https://api.telegram.org/bot${{secrets.TELEGRAM_DEPLOY_NOTIFIER_BOT_TOKEN}}/sendMessage
+
+      - name: 🚚 Get latest code
+        uses: actions/checkout@v4
+
+      - name: Create env file
+        run: |
+          touch .env
+          echo DB_HOST=${{ vars.DB_HOST }} >> .env
+          echo DB_DATABASE=${{ vars.DB_DATABASE }} >> .env
+          echo DB_USERNAME=${{ vars.DB_USER }} >> .env
+          echo DB_PASSWORD=${{ secrets.DB_PASSWORD }} >> .env
+          cat .env
+
+      - name: Removing of extra files
+        run: |
+          rm -rf .ebextensions .platform resources/js
+
+      - name: 📂 Sync files
+        id: ftp_deploy
+        uses: SamKirkland/FTP-Deploy-Action@4.3.3
+        with:
+          server: ${{ vars.FTP_HOST }}
+          username: ${{ vars.FTP_USER }}
+          password: ${{ secrets.FTP_PASSWORD }}
+
+      - name: Sanding the result notification through Telegram
+        run: |
+          curl --get \
+            --data-urlencode 'chat_id=${{vars.TELEGRAM_DEPLOY_NOTICE_RECIPIENT_ID}}' \
+            --data-urlencode 'text=✅SUCCESS! ${{github.event.head_commit.message}} (${{github.event.head_commit.id}})' \
+            https://api.telegram.org/bot${{secrets.TELEGRAM_DEPLOY_NOTIFIER_BOT_TOKEN}}/sendMessage
+
+  debug:
+    name: Check failure
+    needs: build-deploy
+    runs-on: ubuntu-latest
+    if: ${{ failure() }}
+    steps:
+      - name: Sanding the debug result notification through Telegram
+        run: |
+          curl --get \
+            --data-urlencode 'chat_id=${{vars.TELEGRAM_DEPLOY_NOTICE_RECIPIENT_ID}}' \
+            --data-urlencode 'text=🆘FAILED! ${{github.event.head_commit.message}} (${{github.event.head_commit.id}})' \
+            https://api.telegram.org/bot${{secrets.TELEGRAM_DEPLOY_NOTIFIER_BOT_TOKEN}}/sendMessage
