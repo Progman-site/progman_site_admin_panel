@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-require_once "constants.php";
+require_once "init.php";
 require_once "models.php";
 require_once 'ImageSigner/image_signer.inc.php';
 
