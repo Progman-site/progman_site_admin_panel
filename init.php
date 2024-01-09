@@ -3,8 +3,6 @@ require_once "constants.php";
 
 setEnv();
 
-require_once "config.php";
-
 function env(string $key, string $default = ''): string {
     return $_ENV[$key] ?? $default;
 }
