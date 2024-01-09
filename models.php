@@ -6,7 +6,13 @@ use ImageSigner\constants\Colors;
 
 function sqlConnect():mysqli
 {
-    $dbConnect = mysqli_connect(BD_HOST, BD_LOGIN, BD_PASSWORD, BD_NAME);
+    $dbConnect = mysqli_connect(
+        config("database.host"),
+        config("database.user"),
+        config("database.password"),
+        config("database.name")
+    );
+
     mysqli_query($dbConnect, 'SET NAMES utf8');
     if (!$dbConnect) {
         throw new Exception(
@@ -328,4 +334,25 @@ function downloadCertificate(int $id): string {
     ;
 
     return $blank->getBase64(65);
+}
+
+function env(string $key, string $default = ''): string {
+    return $_ENV[$key] ?? $default;
+}
+
+function setEnv(): void {
+    $_ENV = parse_ini_file('.env', false, INI_SCANNER_RAW);
+}
+
+function config(string $param, string $default = ''): mixed {
+    $paramParts = explode('.', $param);
+    $config = include 'config.php';
+    foreach ($paramParts as $paramPart) {
+        if (isset($config[$paramPart])) {
+            $config = $config[$paramPart];
+        } else {
+            return $default;
+        }
+    }
+    return $config;
 }

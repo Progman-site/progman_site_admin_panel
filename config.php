@@ -1,14 +1,10 @@
 <?php
+return [
+    "database" => [
+        "host" => env('DB_HOST', 'localhost'),
+        "user" => env('DB_USER'),
+        "password" => env('DB_PASSWORD'),
+        "name" => env('DB_NAME'),
+    ],
 
-const BD_HOST = '31.31.196.245';
-const BD_LOGIN = 'u0435463_progman';
-const BD_PASSWORD = 'G1e9U8n0';
-const BD_NAME = 'u0435463_progman_site';
-
-const OK_API_STATUS = 'ok!';
-const ERROR_API_STATUS = 'error';
-
-const EN_LANGUAGE = 'en';
-const RU_LANGUAGE = 'ru';
-const LANG_SESSION_KEY = 'lang';
-const DEFAULT_LANGUAGE = EN_LANGUAGE;
+];
