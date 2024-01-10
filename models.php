@@ -71,7 +71,7 @@ function getServicesImages(): array {
 
 function checkUser(string $login, string $password, string $level = 'admin'): ?array {
     $user = sqlQuery(
-        "SELECT * FROM `admins` WHERE `login` = '{$login}' AND `access` = '{$level}';",
+        "SELECT * FROM `admins` WHERE `login` = '{$login}' AND `access` = '{$level}' AND `is_active` = 1;",
         false
     );
     if (@$user['id'] && password_verify($password, $user['password'])){
