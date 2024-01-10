@@ -101,7 +101,15 @@
                 <select name="certificates__course">
                     <option>Course</option>
                     <?php foreach ($courses as $course) { ?>
-                        <option data-type="<?= $course["type"]?>" data-level="<?= $course["level"]?>" data-technologies="<?= $course["technologies"] ?>" data-technologies_ids="<?= $course["technologies_ids"] ?>" data-technologies_descriptions="<?= $course["technologies_descriptions"] ?>" value="<?= $course["id"] ?>"><?= $course["name"] ?></option>
+                        <option
+                                data-type="<?= $course["type"]?>"
+                                data-level="<?= $course["level"]?>"
+                                data-technologies="<?= $course["technologies"] ?>"
+                                data-technologies_ids="<?= $course["technologies_ids"] ?>"
+                                data-technologies_descriptions="<?= $course["technologies_descriptions"] ?>"
+                                value="<?= $course["id"] ?>">
+                            <?= $course["name"] ?>
+                        </option>
                     <?php } ?>
                 </select>
                 <br>
@@ -123,10 +131,18 @@
                     <div>
                         <input type="hidden" name="users__tg_name" data-field="tg_name" value="<?= $item["tg_name"] ?>">
                         <input type="hidden" name="users__tg_id" data-field="tg_id" value="<?= $item["tg_id"] ?>">
+                        <input type="hidden" name="users__tg_name" data-field="tg_name" value="<?= $item["email_name"] ?>">
+                        <input type="hidden" name="users__tg_id" data-field="tg_id" value="<?= $item["email_id"] ?>">
                         <span>Start: <?= date('d-m-Y', strtotime($item["date"])) ?></span>
                         <br><br>
-                        <label>Tg nick: <b><?= $item["tg_name"] ?></b></label><br>
-                        <label>Tg DI: <b><?= $item["tg_id"] ?></b></label><br>
+                        <label>Tg nick: <b><?= $item["tg_name"]  ?? "-" ?></b></label>
+                        <br>
+                        <label>Tg DI: <b><?= $item["tg_id"]   ?? "-" ?></b></label>
+                        <br><br>
+                        <label>Email-name: <b><?= $item["email_name"]  ?? "-" ?></b></label>
+                        <br>
+                        <label>Email: <b><?= $item["email_id"]  ?? "-" ?></b></label>
+                        <br><br>
                         <input type="text" name="users__real_last_name" placeholder="Реальная фамилия" value="<?= $item["real_last_name"] ?>" required disabled><br>
                         <input type="text" name="users__real_first_name" placeholder="Реальное имя" value="<?= $item["real_first_name"] ?>" required disabled><br>
                         <input type="text" name="users__real_middle_name" placeholder="Реальное отчество" value="<?= $item["real_middle_name"] ?>" disabled>

@@ -47,22 +47,17 @@ function getLanguage(): string {
     return isset($_SESSION[LANG_SESSION_KEY]) ? LANG_SESSION_KEY : DEFAULT_LANGUAGE;
 }
 function getSiteInfo(): array {
-    $siteInfo = sqlQuery("SELECT * FROM `language_contents` ORDER BY `order` DESC;");
-    $rebuildArray = [];
-    $langs = [];
+    $siteInfo = sqlQuery("
+        SELECT * FROM `tags` t
+        INNER JOIN `tag_tag_value` tv ON tv.`tag_id` = t.`id`
+        INNER JOIN `tag_values` v ON v.`id` = tv.`tag_value_id`
+        ORDER BY t.`order` DESC;
+    ");
+    $tagsArray = [];
     foreach ($siteInfo as $item) {
-        if (empty($langs)) {
-            foreach ($item as $field => $fieldValue) {
-                if (str_ends_with($field,'_' . LANG_SESSION_KEY)) {
-                    $langs[] = stristr($field, '_' . LANG_SESSION_KEY, true);
-                }
-            }
-        }
-        foreach ($langs as $lang) {
-            $rebuildArray[$item['tag']][$lang] = $item;
-        }
+        $tagsArray[$item['tag_id']][$item['content']] = $item;
     }
-    return $rebuildArray;
+    return $tagsArray;
 }
 
 function getServicesImages(): array {
@@ -199,8 +194,8 @@ function getCourses():array {
                GROUP_CONCAT(t.`id`) AS 'technologies_ids',
                GROUP_CONCAT(t.`description`) AS 'technologies_descriptions'
         FROM `courses` c
-        INNER JOIN `technologies_by_courses` tbc ON c.`id` = tbc.`course`
-        INNER JOIN `technologies` t ON t.`id` = tbc.`technology`
+        INNER JOIN `course_technology` tc ON c.`id` = tc.`course_id`
+        INNER JOIN `technologies` t ON t.`id` = tc.`technology_id`
         ");
 
     $courses = [];
@@ -222,8 +217,10 @@ function getCourses():array {
 
 function getCertificates(?int $id = null): array {
     $certificates = sqlQuery("
-        SELECT u.`tg_name`, 
-               u.`tg_id`, 
+        SELECT tg.`service_uid` AS 'tg_id', 
+               tg.`service_login` AS 'tg_name',
+               em.`service_uid` AS 'email_id', 
+               em.`service_login` AS 'email_name',
                u.`real_last_name`, 
                u.`real_first_name`, 
                u.`real_middle_name`, 
@@ -241,13 +238,15 @@ function getCertificates(?int $id = null): array {
                GROUP_CONCAT(t.`id`) AS 'technologies_ids',
                GROUP_CONCAT(t.`description`) AS 'technologies_descriptions'
         FROM `certificates` c 
-        INNER JOIN `courses` cr ON c.`course` = cr.`id`
-        INNER JOIN `technologies_by_certificates` tbc ON c.`id` = tbc.`certificate`
-        INNER JOIN `technologies` t ON tbc.`technology` = t.`id`
-        INNER JOIN `users` u ON c.`user` = u.`id`"
+        left JOIN `courses` cr ON c.`course_id` = cr.`id`
+        INNER JOIN `certificate_technology` tc ON c.`id` = tc.`certificate_id`
+        INNER JOIN `technologies` t ON tc.`technology_id` = t.`id`
+        INNER JOIN `users` u ON c.`user_id` = u.`id`
+        LEFT JOIN `telegrams` tg ON tg.`user_id` = u.`id`
+        LEFT JOIN `emails` em ON em.`user_id` = u.`id`"
         . ($id ? "WHERE c.`id` = {$id}" : "" ) . "
         GROUP BY c.`id`
-        ORDER BY c.`id` DESC
+        ORDER BY c.`id` DESC;
     ");
 
     foreach ($certificates as &$certificate) {

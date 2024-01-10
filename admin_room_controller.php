@@ -33,6 +33,10 @@ try {
         @$_GET['navigation'] = $_GET['navigation'] ?: "certificates";
         $courses = getCourses();
         $certificates = getCertificates();
+
+//        echo '<pre>';
+//        print_r($certificates);
+//        die();
         $siteInfo = getSiteInfo();
     }
 } catch (Throwable $e) {
