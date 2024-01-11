@@ -30,6 +30,9 @@ try {
         case 'downloadCertificate':
             printResult(downloadCertificate($_POST['id']));
             break;
+        case 'updateSiteInfo':
+            printResult(updateSiteInfo());
+            break;
     }
 } catch (Throwable $e) {
     printError([

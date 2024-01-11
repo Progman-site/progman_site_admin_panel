@@ -39,33 +39,37 @@
         <?php foreach ($siteInfo as $tag => $langItems) { ?>
         <details>
             <summary><b><?= $tag ?></b></summary>
-            <?php foreach (AVAILABLE_LANGUAGES as $lang) { ?>
+            <?php foreach (AVAILABLE_LANGUAGES as $lang) {
+                $tagValue = $langItems[$lang]["value"] ?? "";
+                $tagType = $langItems[DEFAULT_LANGUAGE]['type'];?>
                 <div>
                     <label>
-                        <?= $langItems[DEFAULT_LANGUAGE]['name']?> (<?= $lang?>)
+                        <?= $tag ?> (<?= $lang?>)
                     </label>
                     <br>
-                    <?php if ($langItems[DEFAULT_LANGUAGE]['type'] == 'string') {?>
-                        <input type="text" placeholder="EMPTY FIELD" name="<?= $langItems[DEFAULT_LANGUAGE]['name'] . "-" . $lang . "_" . LANG_SESSION_KEY ?>" value="<?= $langItems[$lang]["value"] ?? "" ?>">
-                    <?php } elseif  ($langItems[DEFAULT_LANGUAGE]['type'] == 'text') { ?>
-                        <textarea  placeholder="EMPTY FIELD" name="<?= $langItems[DEFAULT_LANGUAGE]['name'] . "-" . $lang . "_" . LANG_SESSION_KEY ?>"><?= $langItems[$lang]["value"] ?? "" ?></textarea>
-                    <?php } elseif  ($langItems[DEFAULT_LANGUAGE]['type'] == 'image') { ?>
+                    <?php if ($tagType == 'string') {?>
+                        <input type="text" class="touch_sensitive_input" placeholder="EMPTY FIELD" data-touched="" name="<?= $tag . "-" . $lang ?>" value="<?= $tagValue ?>">
+                    <?php } elseif  ($tagType == 'text') { ?>
+                        <textarea  class="touch_sensitive_input" placeholder="EMPTY FIELD" data-touched="" name="<?= $tag . "-" . $lang ?>"><?= $tagValue ?></textarea>
+                    <?php } elseif  ($tagType == 'image') { ?>
                         <div class="image_editor">
                             <div>
                                 <?php if (isset($langItems[$lang])) { ?>
-                                    <img src="<?= $langItems[$lang]["value"] ?? "" ?>">
+                                    <img src="<?= $tagValue ?>">
                                 <?php } else { ?>
                                     <strong>EMPTY FIELD</strong>
                                 <?php } ?>
                             </div>
-                            <input type="file" name="<?= $langItems[DEFAULT_LANGUAGE]['name']  . "-" . $lang . "_" . LANG_SESSION_KEY?>">
+                            <input type="file" class="touch_sensitive_input" data-touched="" name="<?= $tag  . "-" . $lang ?>">
                         </div>
                     <?php } ?>
                 </div>
             <?php } ?>
         </details>
         <?php } ?>
-        <button type="submit">СОХРАНИТЬ ИЗМЕНЕНИЯ</button>
+        <div class="submit_place">
+            <button type="submit">СОХРАНИТЬ ИЗМЕНЕНИЯ</button>
+        </div>
     </form>
     <pre>
 <?php } ?>
@@ -75,6 +79,9 @@
         <div id="new_price_item">
             <b>NEW</b>
             <div>
+                <input type="hidden" name="users__id" data-field="user_id" value="">
+                <input type="text" class="search_field" name="users__email_name" data-field="email_name" placeholder="Email-name" required><br>
+                <input type="text" class="search_field" name="users__email_id" data-field="email_id" placeholder="Email" required><br>
                 <input type="text" class="search_field" name="users__tg_name" data-field="tg_name" placeholder="telegram nikname" required><br>
                 <input type="text" class="search_field" name="users__tg_id" data-field="tg_id" placeholder="telegram id" required><br>
                 <input type="text" name="users__real_last_name" placeholder="Реальная фамилия" required><br>
@@ -133,10 +140,8 @@
                 <summary><b><?= $item["real_first_name"] ?> <?= $item["real_last_name"] ?></b> certificate</summary>
                 <div data-form_name="user_data">
                     <div>
-                        <input type="hidden" name="users__tg_name" data-field="tg_name" value="<?= $item["tg_name"] ?>">
-                        <input type="hidden" name="users__tg_id" data-field="tg_id" value="<?= $item["tg_id"] ?>">
-                        <input type="hidden" name="users__tg_name" data-field="tg_name" value="<?= $item["email_name"] ?>">
-                        <input type="hidden" name="users__tg_id" data-field="tg_id" value="<?= $item["email_id"] ?>">
+                        <strong># <?= $item["full_number"] ?></strong><br><br>
+                        <input type="hidden" name="users__id" data-field="user_id" value="<?= $item["user_id"] ?>">
                         <span>Start: <?= date('d-m-Y', strtotime($item["date"])) ?></span>
                         <br><br>
                         <label>Tg nick: <b><?= $item["tg_name"]  ?? "-" ?></b></label>

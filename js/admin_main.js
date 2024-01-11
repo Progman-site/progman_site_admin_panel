@@ -73,15 +73,58 @@ document.querySelectorAll('.changer').forEach(key => {
                         console.log(result);
                         if (result.status === "ok!") {
                             alert(result.data);
-                            location.reload();
+                            // location.reload();
                         } else {
                             alert('Не предвиденная ошибка!');
                         }
                     }
-                ));
+                ))
+        }
+    })
+})
+
+
+document.querySelector(".edit_panel").addEventListener('submit', event => {
+    event.preventDefault();
+    let formData = new FormData();
+    formData.append('form_name', 'updateSiteInfo');
+    let inputs = event.target.querySelectorAll('input, select');
+    let textareas = event.target.querySelectorAll('textarea');
+    inputs.forEach(item => {
+        if (!item.readOnly && item.dataset.touched === "1") {
+            formData.append(item.name, item.value);
         }
     });
-});
+    textareas.forEach(item => {
+        if (!item.readOnly && item.dataset.touched === "1") {
+            formData.append(item.name, item.value);
+        }
+    });
+    fetch('admin_api_controller.php', {
+        method: "POST",
+        body: formData
+    }).then(
+        response => response.json().then(
+            result => {
+                console.log(result);
+                if (result.status === "ok!") {
+                    alert(result.data);
+                    location.reload();
+                } else {
+                    alert('Не предвиденная ошибка!');
+                }
+            }
+        ))
+    return false;
+})
+
+document.querySelectorAll('.touch_sensitive_input').forEach(event => {
+    event.addEventListener('input', event => {
+        console.log("touched")
+        event.target.dataset.touched = "1";
+    });
+})
+
 
 document.querySelectorAll('.search_field').forEach(elem => {
     elem.addEventListener('input', event => {

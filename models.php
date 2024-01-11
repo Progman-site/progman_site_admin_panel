@@ -75,31 +75,111 @@ function checkUser(string $login, string $password, string $level = 'admin'): ?a
     return null;
 }
 
-function updateSiteInfo(): void {
+function updateSiteInfo(): string
+{
     foreach ($_FILES as $fileInputName => $fileData) {
         $imgPath = "./images/{$_FILES[$fileInputName]['name']}";
         if (move_uploaded_file($_FILES[$fileInputName]['tmp_name'], $imgPath)) {
             sqlQuery("UPDATE `language_contents` SET `file_url` = '{$imgPath}' WHERE `tag` = '{$fileInputName}'");
         }
     }
-
+    $updatedTags = [];
     foreach ($_POST as $field => $value) {
         $fieldParts = explode('-', $field);
-        if (isset($fieldParts[1])) {
-            $value = str_replace("'", "\'", $value);
-            sqlQuery("UPDATE `language_contents` SET `{$fieldParts[1]}` = '{$value}' WHERE `tag` = '{$fieldParts[0]}'");
+        $tag = sqlQuery("SELECT * FROM `tags` WHERE `name` = '{$fieldParts[0]}'", false);
+        $updatedTags[] = $tag["name"];
+        $valueRecord = sqlQuery("
+            SELECT v.`id` 
+            FROM `tag_tag_value` tv
+            LEFT JOIN `tags` t ON t.`id` = tv.`tag_id`
+            LEFT JOIN `tag_values` v ON v.`id` = tv.`tag_value_id`
+            WHERE t.`id` = '{$tag["id"]}' AND v.content = '{$fieldParts[1]}';
+        ", false);
+
+        $value = str_replace("'", "\'", $value);
+        if (!$valueRecord && $value) {
+            $valueId = sqlQuery("INSERT INTO `tag_values` SET `content` = '{$fieldParts[1]}', `value`='{$value}';");
+            sqlQuery("INSERT INTO `tag_tag_value` SET `tag_id` = '{$tag["id"]}', `tag_value_id` = '{$valueId}';");
+            continue;
         }
+        sqlQuery("UPDATE `tag_values` SET `value` = '{$value}' WHERE `id` = '{$valueRecord["id"]}'");
+
     }
+    return "Теги (" . count($updatedTags)."шт) успешно обновлены!\n\n" . implode("\n", $updatedTags);
 }
 
 function getUserByFieldName(string $field, string $value):?array {
-    return sqlQuery(
-        "SELECT * FROM `users` WHERE `{$field}` = '{$value}'",
+    $db_field = "";
+    $table = "";
+    switch ($field) {
+        case "tg_name":
+            $secondField = "tg_id";
+            $secondTable = "emails";
+            $firstFieldSecondTable = "email_id";
+            $secondFieldSecondTable = "email_name";
+            $db_field = "service_login";
+            $db_secondField = "service_uid";
+            $table = "telegrams";
+            break;
+        case "tg_id":
+            $secondField = "tg_name";
+            $secondTable = "emails";
+            $firstFieldSecondTable = "email_id";
+            $secondFieldSecondTable = "email_name";
+            $db_field = "service_uid";
+            $db_secondField = "service_login";
+            $table = "telegrams";
+            break;
+        case "email_name":
+            $secondField = "email_id";
+            $secondTable = "telegrams";
+            $firstFieldSecondTable = "tg_id";
+            $secondFieldSecondTable = "tg_name";
+            $db_field = "service_login";
+            $db_secondField = "service_uid";
+            $table = "emails";
+            break;
+        case "email_id":
+            $secondField = "email_name";
+            $secondTable = "telegrams";
+            $firstFieldSecondTable = "tg_id";
+            $secondFieldSecondTable = "tg_name";
+            $db_field = "service_uid";
+            $db_secondField = "service_login";
+            $table = "emails";
+            break;
+    }
+    $uid =  sqlQuery(
+        "SELECT * FROM `{$table}` WHERE `{$db_field}` = '{$value}'",
         false
     );
+    $userData = sqlQuery("
+        SELECT
+           u.`id`,
+           u.`real_last_name`, 
+           u.`real_first_name`, 
+           u.`real_middle_name` 
+        FROM `users` u 
+        LEFT JOIN `telegrams` tg ON tg.`user_id` = u.`id`
+        LEFT JOIN `emails` em ON em.`user_id` = u.`id`
+        WHERE u.`id` = {$uid["user_id"]}
+        GROUP BY u.`id`
+    ", false);
+
+    $secondUid =  sqlQuery(
+        "SELECT * FROM `{$secondTable}` ORDER BY `id` DESC LIMIT 1",
+        false
+    );
+    $userData[$field] = $uid[$db_field] ?? null;
+    $userData[$secondField] = $uid[$db_secondField] ?? null;
+    $userData[$firstFieldSecondTable] = $secondUid[$db_field] ?? null;
+    $userData[$secondFieldSecondTable] = $secondUid[$db_secondField] ?? null;
+
+    return $userData;
 }
+
 function printResult(mixed $data, string $status = OK_API_STATUS): void {
-    exit(json_encode(['status' => $status, 'data' => $data]));
+    exit(json_encode(['status' => $status, 'data' => $data], JSON_UNESCAPED_UNICODE));
 }
 
 function printError(mixed $data): void {
@@ -112,7 +192,7 @@ function printError(mixed $data): void {
 function updateCertificate(): void {
     global $connect;
     mysqli_begin_transaction($connect);
-    $user = sqlQuery("SELECT * FROM `users` WHERE `tg_id` = '{$_POST['users__tg_id']}' AND `tg_name` = '{$_POST['users__tg_name']}'", false);
+    $user = sqlQuery("SELECT * FROM `users` WHERE `id` = '{$_POST['users__id']}'", false);
     if (!$user) {
         throw new Exception("Юзер не найден!");
     }
@@ -138,8 +218,8 @@ function updateCertificate(): void {
     } else {
         $certificate = sqlQuery("
             INSERT INTO `certificates` SET 
-                `user` = '{$user['id']}',
-                `course` = '{$_POST['certificates__course']}',
+                `user_id` = '{$user['id']}',
+                `course_id` = '{$_POST['certificates__course']}',
                 `hours` = '{$_POST['certificates__hours']}',
                 `description` = '{$_POST['certificates__description']}',
                 `language` = '{$_POST['certificates__language']}',
@@ -150,21 +230,21 @@ function updateCertificate(): void {
         if (!@$certificate['id']) {
             throw new Exception("Ошибка при создании сертификата!");
         }
-        $certificateNumber = "{$user['tg_id']}-{$user['id']}-{$certificate['id']}" . strtoupper($_POST['certificates__language']) . date('Y');
+        $certificateNumber = "{$user['id']}00-{$certificate['course_id']}-{$certificate['id']}" . strtoupper($_POST['certificates__language']) . date('Y');
         sqlQuery("UPDATE `certificates` SET `full_number` = '{$certificateNumber}' WHERE `id` = '{$certificate['id']}';");
     }
     foreach ($_POST as $keyPost => $onePost) {
         if(str_starts_with($keyPost, 'technologies')) {
             $technologyData = explode('__', $keyPost);
-            $checkTechnology = sqlQuery("SELECT * FROM `technologies_by_courses` WHERE `technology` = '{$technologyData[1]}' AND `course` = '{$certificate['course']}'", false);
+            $checkTechnology = sqlQuery("SELECT * FROM `course_technology` WHERE `technology_id` = '{$technologyData[1]}' AND `course_id` = '{$certificate['course_id']}'", false);
             if (!$checkTechnology) {
                 throw new Exception("Ошибка соответствия технологии {$technologyData[1]}/{$certificate['id']}");
             }
-            $technology = sqlQuery("SELECT * FROM `technologies_by_certificates` WHERE `technology` = '{$technologyData[1]}' AND `certificate` = '{$certificate['id']}'", false);
+            $technology = sqlQuery("SELECT * FROM `certificate_technology` WHERE `technology_id` = '{$technologyData[1]}' AND `certificate_id` = '{$certificate['id']}'", false);
             if ($technology && !$onePost) {
-                sqlQuery("DELETE FROM `technologies_by_certificates` WHERE `id` = '{$technology['id']}';");
+                sqlQuery("DELETE FROM `certificate_technology` WHERE `technology_id` = '{$technology['id']}';");
             } elseif (!$technology && $onePost) {
-                $newTechnology = sqlQuery("INSERT INTO `technologies_by_certificates` SET `technology` = '{$technologyData[1]}', `certificate` = '{$certificate['id']}';");
+                $newTechnology = sqlQuery("INSERT INTO `certificate_technology` SET `technology_id` = '{$technologyData[1]}', `certificate_id` = '{$certificate['id']}';");
                 if (!$newTechnology) {
                     throw new Exception("Ошибка при создании соответствия технологии {$technologyData[1]} и сертификата {$certificate['id']}");
                 }
@@ -180,7 +260,7 @@ function delCertificate(?int $id = null): void {
     if (
         $id
         && !empty($certificate)
-        && sqlQuery("DELETE FROM `technologies_by_certificates` WHERE `certificate` = {$id};")
+        && sqlQuery("DELETE FROM `certificate_technology` WHERE `certificate_id` = {$id};")
         && sqlQuery("DELETE FROM `certificates` WHERE `id` = $id;")
     ) {
         printResult("Сертификат #{$id} удален из базы!");
@@ -221,6 +301,7 @@ function getCertificates(?int $id = null): array {
                tg.`service_login` AS 'tg_name',
                em.`service_uid` AS 'email_id', 
                em.`service_login` AS 'email_name',
+               u.`id` AS 'user_id',
                u.`real_last_name`, 
                u.`real_first_name`, 
                u.`real_middle_name`, 

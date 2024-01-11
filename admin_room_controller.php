@@ -17,26 +17,10 @@ if (@trim($_POST['login']) && @trim($_POST['password'])) {
 
 try {
     if (isset($_SESSION['authorization'])) {
-        if (isset($_POST['form_name'])) {
-            $formName = $_POST['form_name'];
-            unset($_POST['form_name']);
-
-            switch ($formName) {
-                case 'edit':
-                    updateSiteInfo();
-                    break;
-                case '_______':
-                    printResult(getUserByFieldName($_POST['field'], $_POST['value']));
-                    break;
-            }
-        }
         @$_GET['navigation'] = $_GET['navigation'] ?: "certificates";
         $courses = getCourses();
         $certificates = getCertificates();
         $siteInfo = getSiteInfo();
-//        echo '<pre>';
-//        print_r($siteInfo);
-//        die();
     }
 } catch (Throwable $e) {
     printError([
