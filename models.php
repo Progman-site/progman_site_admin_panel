@@ -55,7 +55,7 @@ function getSiteInfo(): array {
     ");
     $tagsArray = [];
     foreach ($siteInfo as $item) {
-        $tagsArray[$item['tag_id']][$item['content']] = $item;
+        $tagsArray[$item['name']][$item['content']] = $item;
     }
     return $tagsArray;
 }

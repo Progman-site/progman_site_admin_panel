@@ -36,25 +36,29 @@
     <form class="edit_panel" method="post" enctype="multipart/form-data">
         <h3>Основные настройки</h3>
         <input type="hidden" name="form_name" value="edit">
-        <?php foreach ($siteInfo as $tag => $langs) { ?>
+        <?php foreach ($siteInfo as $tag => $langItems) { ?>
         <details>
             <summary><b><?= $tag ?></b></summary>
-            <?php foreach ($langs as $lang => $item) { ?>
+            <?php foreach (AVAILABLE_LANGUAGES as $lang) { ?>
                 <div>
                     <label>
-                        <?= $item['name']?> (<?= $lang?>)
+                        <?= $langItems[DEFAULT_LANGUAGE]['name']?> (<?= $lang?>)
                     </label>
                     <br>
-                    <?php if ($item['type'] == 'string') {?>
-                        <input type="text" name="<?= $item['tag'] . "-" . $lang . "_" . LANG_SESSION_KEY ?>" value="<?= $item[$lang . "_" . LANG_SESSION_KEY]?>">
-                    <?php } elseif  ($item['type'] == 'text') { ?>
-                        <textarea  name="<?= $item['tag'] . "-" . $lang . "_" . LANG_SESSION_KEY ?>"><?= $item[$lang . "_" . LANG_SESSION_KEY]?></textarea>
-                    <?php } elseif  ($item['type'] == 'image') { ?>
+                    <?php if ($langItems[DEFAULT_LANGUAGE]['type'] == 'string') {?>
+                        <input type="text" placeholder="EMPTY FIELD" name="<?= $langItems[DEFAULT_LANGUAGE]['name'] . "-" . $lang . "_" . LANG_SESSION_KEY ?>" value="<?= $langItems[$lang]["value"] ?? "" ?>">
+                    <?php } elseif  ($langItems[DEFAULT_LANGUAGE]['type'] == 'text') { ?>
+                        <textarea  placeholder="EMPTY FIELD" name="<?= $langItems[DEFAULT_LANGUAGE]['name'] . "-" . $lang . "_" . LANG_SESSION_KEY ?>"><?= $langItems[$lang]["value"] ?? "" ?></textarea>
+                    <?php } elseif  ($langItems[DEFAULT_LANGUAGE]['type'] == 'image') { ?>
                         <div class="image_editor">
                             <div>
-                                <img src="<?= $item[$lang . "_" . LANG_SESSION_KEY] ?>">
+                                <?php if (isset($langItems[$lang])) { ?>
+                                    <img src="<?= $langItems[$lang]["value"] ?? "" ?>">
+                                <?php } else { ?>
+                                    <strong>EMPTY FIELD</strong>
+                                <?php } ?>
                             </div>
-                            <input type="file" name="<?= $item['tag'] . "-" . $lang . "_" . LANG_SESSION_KEY?>">
+                            <input type="file" name="<?= $langItems[DEFAULT_LANGUAGE]['name']  . "-" . $lang . "_" . LANG_SESSION_KEY?>">
                         </div>
                     <?php } ?>
                 </div>
