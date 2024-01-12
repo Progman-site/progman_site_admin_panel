@@ -55,7 +55,7 @@ function getSiteInfo(): array {
     ");
     $tagsArray = [];
     foreach ($siteInfo as $item) {
-        $tagsArray[$item['name']][$item['content']] = $item;
+        $tagsArray[$item['name']][$item['content'] ?? DEFAULT_LANGUAGE] = $item;
     }
     return $tagsArray;
 }
