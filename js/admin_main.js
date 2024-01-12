@@ -90,16 +90,28 @@ document.querySelector(".edit_panel").addEventListener('submit', event => {
     formData.append('form_name', 'updateSiteInfo');
     let inputs = event.target.querySelectorAll('input, select');
     let textareas = event.target.querySelectorAll('textarea');
+    let tagsCounter = [];
     inputs.forEach(item => {
         if (!item.readOnly && item.dataset.touched === "1") {
             formData.append(item.name, item.value);
+            tagsCounter.push(item.name);
         }
     });
     textareas.forEach(item => {
         if (!item.readOnly && item.dataset.touched === "1") {
             formData.append(item.name, item.value);
+            tagsCounter.push(item.name);
         }
     });
+
+    if (tagsCounter.length === 0) {
+        console.log('no changes');
+        return false;
+    }
+    if (!confirm("Do you really want to change tags? :\n\n" + tagsCounter.join("\n"))) {
+        return false;
+    }
+
     fetch('admin_api_controller.php', {
         method: "POST",
         body: formData
@@ -120,8 +132,9 @@ document.querySelector(".edit_panel").addEventListener('submit', event => {
 
 document.querySelectorAll('.touch_sensitive_input').forEach(event => {
     event.addEventListener('input', event => {
-        console.log("touched")
         event.target.dataset.touched = "1";
+        event.target.style.background = 'lightgoldenrodyellow';
+        event.target.parentElement.parentElement.style.background = 'lightsalmon';
     });
 })
 
@@ -256,4 +269,64 @@ function downloadCertificate(id, theElement) {
         urlToFile(result.data, theElement)
     })).then(res => console.log(res));
 }
+
+document.querySelector('#tag_search').addEventListener('input', event => {
+    event.target.style.background = 'white'
+    let value = event.target.value.trim()
+    if (value.length < 1) {
+        hideAllTags(false)
+        return false
+    }
+    if (value.length < 3) {
+        return false;
+    }
+    event.target.style.background = 'lightgray'
+    hideAllTags(true)
+
+    let values = value.split(" ")
+    if (values.length === 1) {
+        let tagsBox = document.querySelector('.edit_panel').querySelector(`#${value}`)
+        if (tagsBox) {
+            event.target.style.background = 'lightgreen'
+            tagsBox.style.display = "block"
+            tagsBox.open = true;
+        }
+    } else {
+        document.querySelector('.edit_panel').querySelectorAll('details').forEach(item => {
+            for (let word of values) {
+                word = word.trim().toLocaleLowerCase()
+                if (word.length < 2) {
+                    continue
+                }
+                if (
+                    (item.id && item.id.toLocaleLowerCase().includes(word))
+                    || (item.dataset.description && item.dataset.description.toLocaleLowerCase().includes(word))
+                ) {
+                    item.style.display = "block"
+                    event.target.style.background = 'lightblue'
+                }
+            }
+        })
+    }
+})
+
+
+
+function hideAllTags(hide = true) {
+    document.querySelector('.edit_panel').querySelectorAll('details').forEach(item => {
+        if (hide) {
+            item.open = false
+        }
+        item.style.display = hide ? "none" : "block"
+    })
+}
+
+document.querySelectorAll('form .reset').forEach(item => {
+    item.addEventListener('click', event => {
+        if (!confirm("Do you really want to reset all changes?")){
+            return false
+        }
+        location.reload()
+    })
+})
 

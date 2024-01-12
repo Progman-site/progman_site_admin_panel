@@ -35,16 +35,17 @@
 <?php if (@$_GET['navigation'] == "setting") { ?>
     <form class="edit_panel" method="post" enctype="multipart/form-data">
         <h3>Основные настройки</h3>
+        <input type="text" id="tag_search" value="" placeholder="search by tag name or description">
         <input type="hidden" name="form_name" value="edit">
         <?php foreach ($siteInfo as $tag => $langItems) { ?>
-        <details>
+        <details id="<?= $tag ?>" data-description="<?= $langItems[DEFAULT_LANGUAGE]['description'] ?>">
             <summary><b><?= $tag ?></b></summary>
             <?php foreach (AVAILABLE_LANGUAGES as $lang) {
                 $tagValue = $langItems[$lang]["value"] ?? "";
                 $tagType = $langItems[DEFAULT_LANGUAGE]['type'];?>
                 <div>
                     <label>
-                        <?= $tag ?> (<?= $lang?>)
+                        <?= $langItems[DEFAULT_LANGUAGE]['description'] ?> (<?= $lang?>)
                     </label>
                     <br>
                     <?php if ($tagType == 'string') {?>
@@ -68,7 +69,8 @@
         </details>
         <?php } ?>
         <div class="submit_place">
-            <button type="submit">СОХРАНИТЬ ИЗМЕНЕНИЯ</button>
+            <button type="submit">SAVE CHANGES</button>
+            <button type="button" class="reset">RESET</button>
         </div>
     </form>
     <pre>

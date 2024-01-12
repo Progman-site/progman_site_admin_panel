@@ -15,7 +15,9 @@ body {
     border-radius: 5px;
 }
 
-button[type="submit"] {
+button[type="submit"],
+button[type="button"]
+{
     padding: 5px 50px;
     font-size: 14px;
     border-radius: 10px;
@@ -313,4 +315,15 @@ select[name="certificates__course"] {
 .navigation .pressed {
     background: #d3fcd3;
     font-weight: bold;
+}
+
+#tag_search {
+    margin: 20px auto;
+    max-width: 300px;
+}
+
+button.reset {
+    color: lightcoral;
+    padding-right: 5px;
+    padding-left: 5px;
 }
