@@ -49,8 +49,8 @@ function getLanguage(): string {
 function getSiteInfo(): array {
     $siteInfo = sqlQuery("
         SELECT * FROM `tags` t
-        INNER JOIN `tag_tag_value` tv ON tv.`tag_id` = t.`id`
-        INNER JOIN `tag_values` v ON v.`id` = tv.`tag_value_id`
+        LEFT JOIN `tag_tag_value` tv ON tv.`tag_id` = t.`id`
+        LEFT JOIN `tag_values` v ON v.`id` = tv.`tag_value_id`
         ORDER BY t.`order` DESC;
     ");
     $tagsArray = [];
