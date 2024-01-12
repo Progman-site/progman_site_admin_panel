@@ -16,7 +16,7 @@ function sqlConnect():mysqli
     mysqli_query($dbConnect, 'SET NAMES utf8');
     if (!$dbConnect) {
         throw new Exception(
-            'Ошибка подключения (' .
+            'Connection error (' .
             mysqli_connect_errno() .
             ') ' .
             mysqli_connect_error()
@@ -112,7 +112,7 @@ function updateSiteInfo(): string
         }
 
     }
-    return "Теги (" . count($updatedTags)."шт) успешно обновлены!\n\n" . implode("\n", $updatedTags);
+    return "Tags (" . count($updatedTags)."pс) have been successfully updated!\n\n" . implode("\n", $updatedTags);
 }
 
 function getUserByFieldName(string $field, string $value):?array {
@@ -201,7 +201,7 @@ function updateCertificate(): void {
     mysqli_begin_transaction($connect);
     $user = sqlQuery("SELECT * FROM `users` WHERE `id` = '{$_POST['users__id']}'", false);
     if (!$user) {
-        throw new Exception("Юзер не найден!");
+        throw new Exception("The user(id:{$_POST['users__id']}) is not found!");
     }
     sqlQuery("UPDATE `users` SET 
                    `real_last_name` = '{$_POST['users__real_last_name']}', 
@@ -213,7 +213,7 @@ function updateCertificate(): void {
     if (isset($_POST['id'])) {
         $certificate = sqlQuery("SELECT * FROM `certificates` WHERE `id` = '{$_POST['id']}'", false);
         if (!@$certificate['id']) {
-            throw new Exception("Ошибка при обновлении сертификата!");
+            throw new Exception("Error while the certificate(id:{$certificate['id']}) updating!");
         }
         sqlQuery("
             UPDATE `certificates` SET 
@@ -235,7 +235,7 @@ function updateCertificate(): void {
         $certificate = sqlQuery("SELECT * FROM `certificates` WHERE `id` = '{$certificate}'", false);
 
         if (!@$certificate['id']) {
-            throw new Exception("Ошибка при создании сертификата!");
+            throw new Exception("Error while creating a new certificate for the user(id:{$_POST['users__id']})!");
         }
         $certificateNumber = "{$user['id']}00-{$certificate['course_id']}-{$certificate['id']}" . strtoupper($_POST['certificates__language']) . date('Y');
         sqlQuery("UPDATE `certificates` SET `full_number` = '{$certificateNumber}' WHERE `id` = '{$certificate['id']}';");
@@ -245,7 +245,7 @@ function updateCertificate(): void {
             $technologyData = explode('__', $keyPost);
             $checkTechnology = sqlQuery("SELECT * FROM `course_technology` WHERE `technology_id` = '{$technologyData[1]}' AND `course_id` = '{$certificate['course_id']}'", false);
             if (!$checkTechnology) {
-                throw new Exception("Ошибка соответствия технологии {$technologyData[1]}/{$certificate['id']}");
+                throw new Exception("Error while attaching a technology to a certificate  {$technologyData[1]}/{$certificate['id']}");
             }
             $technology = sqlQuery("SELECT * FROM `certificate_technology` WHERE `technology_id` = '{$technologyData[1]}' AND `certificate_id` = '{$certificate['id']}'", false);
             if ($technology && !$onePost) {
@@ -253,13 +253,13 @@ function updateCertificate(): void {
             } elseif (!$technology && $onePost) {
                 $newTechnology = sqlQuery("INSERT INTO `certificate_technology` SET `technology_id` = '{$technologyData[1]}', `certificate_id` = '{$certificate['id']}';");
                 if (!$newTechnology) {
-                    throw new Exception("Ошибка при создании соответствия технологии {$technologyData[1]} и сертификата {$certificate['id']}");
+                    throw new Exception("Error while creating the technology(id:{$technologyData[1]}) and the certificate(id:{$certificate['id']})");
                 }
             }
         }
     }
     mysqli_commit($connect);
-    printResult("Сертификат успешно создан/обновлен ({$certificate['id']})!");
+    printResult("The certificate(id:{$certificate['id']}) is successfully updated/created!");
 }
 
 function delCertificate(?int $id = null): void {
@@ -270,7 +270,7 @@ function delCertificate(?int $id = null): void {
         && sqlQuery("DELETE FROM `certificate_technology` WHERE `certificate_id` = {$id};")
         && sqlQuery("DELETE FROM `certificates` WHERE `id` = $id;")
     ) {
-        printResult("Сертификат #{$id} удален из базы!");
+        printResult("The certificate(id:{$certificate['id']}) is successfully deleted from the database!");
     }
 }
 

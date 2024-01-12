@@ -12,21 +12,21 @@
 <body>
 <?php if (!isset($_SESSION['authorization'])) { ?>
     <form class="authorization" method="post">
-        <h3>Вход в админ панель</h3>
+        <h3>Entre to the admin panel</h3>
         <div>
             <input type="text" name="login" placeholder="login">
         </div>
         <div>
             <input type="password" name="password" placeholder="password">
         </div>
-        <button type="submit">ВОЙТИ</button>
+        <button type="submit">LOGIN</button>
     </form>
 <?php exit();?>
 <?php }?>
     <form class="reset" method="post">
         <input type="hidden" name="reset" value="1">
-        Доброго времени, <b><?= $_SESSION['authorization']['login']?></b>!
-        <button type="submit">выход</button>
+        How are you doing, <b><?= $_SESSION['authorization']['login']?></b>!
+        <button type="submit">logout</button>
     </form>
     <form class="navigation">
         <input type="submit" class="<?= @$_GET['navigation'] == "certificates" ? "pressed" : "" ?>" name="navigation" value="certificates">
@@ -34,7 +34,7 @@
     </form>
 <?php if (@$_GET['navigation'] == "setting") { ?>
     <form class="edit_panel" method="post" enctype="multipart/form-data">
-        <h3>Основные настройки</h3>
+        <h3>Tag content settings</h3>
         <input type="text" id="tag_search" value="" placeholder="search by tag name or description">
         <input type="hidden" name="form_name" value="edit">
         <?php foreach ($siteInfo as $tag => $langItems) { ?>
@@ -77,20 +77,20 @@
 <?php } ?>
 <?php if (@$_GET['navigation'] == "certificates") { ?>
     <div class="edit_panel certificates price_list">
-        <h3>Управление сертификатами</h3>
+        <h3>Certificates management</h3>
         <div id="new_price_item">
-            <b>NEW</b>
+            <b>Generate a NEW one</b>
             <div>
                 <input type="hidden" name="users__id" data-field="user_id" value="">
                 <input type="text" class="search_field" name="users__email_name" data-field="email_name" placeholder="Email-name" required><br>
                 <input type="text" class="search_field" name="users__email_id" data-field="email_id" placeholder="Email" required><br>
                 <input type="text" class="search_field" name="users__tg_name" data-field="tg_name" placeholder="telegram nikname" required><br>
                 <input type="text" class="search_field" name="users__tg_id" data-field="tg_id" placeholder="telegram id" required><br>
-                <input type="text" name="users__real_last_name" placeholder="Реальная фамилия" required><br>
-                <input type="text" name="users__real_first_name" placeholder="Реальное имя" required><br>
-                <input type="text" name="users__real_middle_name" placeholder="Реальное отчество">
+                <input type="text" name="users__real_first_name" placeholder="a legal first name" required><br>
+                <input type="text" name="users__real_last_name" placeholder="a legal last name" required><br>
+                <input type="text" name="users__real_middle_name" placeholder="a legal middle name">
                 <br><br>
-                <label>Hours: <input type="number" name="certificates__hours" placeholder="кол-во часов" ></label>
+                <label>Hours: <input type="number" name="certificates__hours" placeholder="count of hours" ></label>
                 <br><br>
                 <div>
                     <label>Teach lang:
@@ -108,7 +108,7 @@
                     </label>
                 </div>
                 <br><br>
-                <textarea name="certificates__description" cols="30" rows="10" placeholder="Особые отметки"></textarea>
+                <textarea name="certificates__description" cols="30" rows="10" placeholder="Special notes"></textarea>
             </div>
             <div style="margin-top: 20px">
                 <select name="certificates__course">
@@ -126,14 +126,14 @@
                     <?php } ?>
                 </select>
                 <br>
-                <strong>тип: <span class="course_type"></span></strong>
+                <strong>type: <span class="course_type"></span></strong>
                 &nbsp;&nbsp;
                 <strong>Level: <span class="course_level"></span></strong>
                 <h4>Technologies:</h4>
                 <div class="checkbox_list"></div>
             </div>
             <div>
-                <button class="changer" data-task="save" data-id="">ВЫДАТЬ</button>
+                <button class="changer" data-task="save" data-id="">GENERATE</button>
             </div>
         </div>
 
@@ -154,35 +154,35 @@
                         <br>
                         <label>Email: <b><?= $item["email_id"]  ?? "-" ?></b></label>
                         <br><br>
-                        <input type="text" name="users__real_last_name" placeholder="Реальная фамилия" value="<?= $item["real_last_name"] ?>" required disabled><br>
-                        <input type="text" name="users__real_first_name" placeholder="Реальное имя" value="<?= $item["real_first_name"] ?>" required disabled><br>
-                        <input type="text" name="users__real_middle_name" placeholder="Реальное отчество" value="<?= $item["real_middle_name"] ?>" disabled>
+                        <input type="text" name="users__real_first_name" placeholder="a legal first name" value="<?= $item["real_first_name"] ?>" required disabled><br>
+                        <input type="text" name="users__real_last_name" placeholder="a legal last name" value="<?= $item["real_last_name"] ?>" required disabled><br>
+                        <input type="text" name="users__real_middle_name" placeholder="a legal middle name" value="<?= $item["real_middle_name"] ?>" disabled>
                     </div>
                     <div>
-                        <textarea name="certificates__description" cols="30" rows="10" placeholder="Заметки по пользователю" disabled><?= $item['description'] ?></textarea>
+                        <textarea name="certificates__description" cols="30" rows="10" placeholder="Special notes" disabled><?= $item['description'] ?></textarea>
                         <br><br>
                         <div>
                             Course: <strong><?= $item['course']?></strong>
                         </div>
                         <br>
-                        <strong>тип: <span class="course_type"><?= $item['id']?></span></strong>
+                        <strong>type: <span class="course_type"><?= $item['id']?></span></strong>
                         &nbsp;&nbsp;
                         <strong>Level: <span class="course_level"><?= $item['level']?></span></strong>
                         <h4>Technologies:</h4>
                     </div>
                     <div>
-                        <button class="changer" data-task="change" data-id="<?= $item['id']?>">изменить</button>
+                        <button class="changer" title="unblock changing of the certificate" data-task="change" data-id="<?= $item['id']?>">change</button>
                         <br/><br/>
-                        <button class="deleter" data-id=<?= $item['id']?>>удалить</button>
+                        <button class="deleter" title="delete the certificate" data-id=<?= $item['id']?>>del</button>
                         <br/><br/><br/><br/><br/>
-                        <button title="Загрузка графического файла сертификата" onclick="downloadCertificate(<?= $item['id']?>, this.parentNode.parentNode)">СКАЧАТЬ</button>
+                        <button title="Downloading the graphic picture of the certificate" onclick="downloadCertificate(<?= $item['id']?>, this.parentNode.parentNode)">DOWNLOAD</button>
                     </div>
                     <div>
                         <br>
                         <div>
                             <label>
                                 Hours:
-                                <input type="number" name="certificates__hours" placeholder="кол-во часов" value="<?= $item['hours']?>" disabled>
+                                <input type="number" name="certificates__hours" placeholder="count of hours" value="<?= $item['hours']?>" disabled>
                             </label>
                         </div>
                         <br>

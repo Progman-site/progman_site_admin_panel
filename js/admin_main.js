@@ -13,7 +13,7 @@
 //                 if (result) {
 //                     technologies = result;
 //                 } else {
-//                     alert('Не предвиденная ошибка!');
+//                     alert('An unexpected error!');
 //                 }
 //             }
 //         ));
@@ -29,19 +29,19 @@ document.querySelectorAll('.changer').forEach(key => {
             });
             event.target.parentElement.lastElementChild.remove();
             event.target.dataset.task = 'save';
-            event.target.innerText = 'сохранить'
+            event.target.innerText = 'Save'
         }
         else if (event.target.dataset.task === 'save') {
             if (event.target.dataset.id) {
-                if (!confirm(`Вы действительно хотите внести изменения?`)
-                    || prompt('Напишите: да') !== `да`) {
-                    alert("все изменения отменены!")
+                if (!confirm(`Do you really want to make the changes?`)
+                    || prompt('Write: yes') !== `yes`) {
+                    alert("All changes have been canceled!")
                     location.reload()
                     return false;
                 }
             } else {
-                if (!confirm(`Вы действительно хотите создать сертификат?`)) {
-                    alert("все изменения отменены!")
+                if (!confirm(`Do you really want to create a certificate?`)) {
+                    alert("All changes have been canceled!")
                     location.reload()
                     return false;
                 }
@@ -75,7 +75,7 @@ document.querySelectorAll('.changer').forEach(key => {
                             alert(result.data);
                             // location.reload();
                         } else {
-                            alert('Не предвиденная ошибка!');
+                            alert('An unexpected error!');
                         }
                     }
                 ))
@@ -123,7 +123,7 @@ document.querySelector(".edit_panel").addEventListener('submit', event => {
                     alert(result.data);
                     location.reload();
                 } else {
-                    alert('Не предвиденная ошибка!');
+                    alert('An unexpected error!');
                 }
             }
         ))
@@ -205,10 +205,10 @@ document.querySelectorAll('.deleter').forEach(key => {
     key.addEventListener('click', event => {
         let id = event.target.dataset.id;
         if (
-            !confirm(`вы действительно хотите удалить сертификат #${id}\n из базы безвозвратно?`)
-            || prompt(`Напишите: 'удалить #${id}'`) !== `удалить #${id}`
+            !confirm(`Do you really want to remove the certificate(id:${id})\n from database forever?`)
+            || prompt(`Write: 'delete #${id}'`) !== `delete #${id}`
         ) {
-            alert("Удаление отменено!")
+            alert("Deletion cancelled!")
             return false;
         }
         let formData = new FormData();
@@ -226,7 +226,7 @@ document.querySelectorAll('.deleter').forEach(key => {
                         alert(result.data);
                         location.reload();
                     } else {
-                        alert('Не предвиденная ошибка!');
+                        alert('An unexpected error!');
                     }
                 }
             ));
