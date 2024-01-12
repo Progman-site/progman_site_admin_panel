@@ -417,8 +417,6 @@ function downloadCertificate(int $id): string {
             0,
             0.7,
             5
-        )
-    ;
-
+        );
     return $blank->getBase64(65);
 }

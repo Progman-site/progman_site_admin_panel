@@ -1,24 +1,3 @@
-// let technologies = null;
-// getTechnologies();
-// function getTechnologies() {
-//     let formData = new FormData();
-//     formData.append('form_name', 'getTechnologies');
-//     fetch('admin_api_controller.php', {
-//         method: "POST",
-//         body: formData,
-//     }).then(
-//         response => response.json().then(
-//             result => {
-//                 console.log(result);
-//                 if (result) {
-//                     technologies = result;
-//                 } else {
-//                     alert('An unexpected error!');
-//                 }
-//             }
-//         ));
-// }
-
 document.querySelectorAll('.changer').forEach(key => {
     key.addEventListener('click', event => {
         if (event.target.dataset.task === 'change') {
@@ -253,9 +232,6 @@ function urlToFile(data, theElement, name = 'certificate'){
     popup.appendChild(img);
     popup.appendChild(a);
     theElement.appendChild(popup);
-    // a.href = data; //Image Base64 Goes here
-    // a.download = name + ".jpg"; //File name Here
-    // a.click(); //Downloaded file
 }
 
 function downloadCertificate(id, theElement) {
@@ -329,4 +305,3 @@ document.querySelectorAll('form .reset').forEach(item => {
         location.reload()
     })
 })
-
