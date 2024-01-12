@@ -99,10 +99,17 @@ function updateSiteInfo(): string
         $value = str_replace("'", "\'", $value);
         if (!$valueRecord && $value) {
             $valueId = sqlQuery("INSERT INTO `tag_values` SET `content` = '{$fieldParts[1]}', `value`='{$value}';");
-            sqlQuery("INSERT INTO `tag_tag_value` SET `tag_id` = '{$tag["id"]}', `tag_value_id` = '{$valueId}';");
+            if (!$valueId) {
+                throw new Exception("Error while adding tag value '{$tag["name"]}' with content '{$fieldParts[1]}'");
+            }
+            if (!sqlQuery("INSERT INTO `tag_tag_value` SET `tag_id` = '{$tag["id"]}', `tag_value_id` = '{$valueId}';")) {
+                throw new Exception("Error while connecting tag {$tag["name"]} with value {$valueId}({$fieldParts[1]})");
+            }
             continue;
         }
-        sqlQuery("UPDATE `tag_values` SET `value` = '{$value}' WHERE `id` = '{$valueRecord["id"]}'");
+        if (!sqlQuery("UPDATE `tag_values` SET `value` = '{$value}' WHERE `id` = '{$valueRecord["id"]}'")) {
+            throw new Exception("Error while updating tag {$tag["name"]}");
+        }
 
     }
     return "Теги (" . count($updatedTags)."шт) успешно обновлены!\n\n" . implode("\n", $updatedTags);
