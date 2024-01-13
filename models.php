@@ -87,6 +87,9 @@ function updateSiteInfo(): string
     foreach ($_POST as $field => $value) {
         $fieldParts = explode('-', $field);
         $tag = sqlQuery("SELECT * FROM `tags` WHERE `name` = '{$fieldParts[0]}'", false);
+        if (!$tag) {
+            throw new Exception("Error tag(name:{$fieldParts[0]}) is not found!");
+        }
         $updatedTags[] = $tag["name"];
         $valueRecord = sqlQuery("
             SELECT v.`id` 
