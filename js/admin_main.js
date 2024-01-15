@@ -273,11 +273,11 @@ function searchTags(searchField, withValues = false) {
         if (tagsBox) {
             searchField.style.background = 'lightgreen'
             tagsBox.style.display = "block"
-            searchField.style.color = 'darkgreen';
+            searchField.style.color = 'darkred';
             tagsBox.open = true;
         }
     } else {
-        items = []
+        let items = []
         document.querySelector('.edit_panel').querySelectorAll('details').forEach(item => {
             if (!withValues) {
                 for (let word of values) {
@@ -295,7 +295,7 @@ function searchTags(searchField, withValues = false) {
                 }
             } else {
                 item.querySelectorAll('input, textarea').forEach(input => {
-                    if (input.value.toLocaleLowerCase().includes(value)) {
+                    if (input.value.toLocaleLowerCase().includes(value.toLocaleLowerCase())) {
                         items.push(item)
                     }
                 })
