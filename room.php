@@ -35,8 +35,8 @@
 <?php if (@$_GET['navigation'] == "setting") { ?>
     <form class="edit_panel" method="post" enctype="multipart/form-data">
         <h3>Tag content settings</h3>
-        <input type="text" id="tag_search" value="" placeholder="search by tag name or description">
-        <input type="checkbox" id="tag_search_with_values" title="searching including current values">
+        <input type="text" id="tag_search" value="" placeholder="Search by tag name or description">
+        <input type="checkbox" id="tag_search_with_values" title="Searching by current values">
         <label for="tag_search_with_values">values</label>
         <input type="hidden" name="form_name" value="edit">
         <?php foreach ($siteInfo as $tag => $langItems) { ?>

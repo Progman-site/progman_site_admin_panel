@@ -255,6 +255,10 @@ document.querySelectorAll('#tag_search, #tag_search_with_values').forEach(
 
 function searchTags(searchField, withValues = false) {
     searchField.style.background = 'white'
+    searchField.placeholder = withValues ?
+        'Search by piece of existing tag values'
+        : 'Search by a tag name or description'
+
     let value = searchField.value.trim()
     if (value.length < 1) {
         hideAllTags(false)
