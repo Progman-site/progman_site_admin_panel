@@ -321,6 +321,9 @@ select[name="certificates__course"] {
     margin: 20px auto;
     max-width: 300px;
 }
+#tag_search_with_values {
+    zoom: 1.5;
+}
 
 button.reset {
     color: lightcoral;

@@ -246,9 +246,16 @@ function downloadCertificate(id, theElement) {
     })).then(res => console.log(res));
 }
 
-document.querySelector('#tag_search').addEventListener('input', event => {
-    event.target.style.background = 'white'
-    let value = event.target.value.trim()
+document.querySelectorAll('#tag_search, #tag_search_with_values').forEach(
+    item => item.addEventListener('input', () => searchTags(
+        document.querySelector('#tag_search'),
+        document.querySelector('#tag_search_with_values').checked
+    ))
+)
+
+function searchTags(searchField, withValues = false) {
+    searchField.style.background = 'white'
+    let value = searchField.value.trim()
     if (value.length < 1) {
         hideAllTags(false)
         return false
@@ -256,35 +263,54 @@ document.querySelector('#tag_search').addEventListener('input', event => {
     if (value.length < 3) {
         return false;
     }
-    event.target.style.background = 'lightgray'
+    searchField.style.background = 'lightgray'
+    searchField.style.color = 'black'
     hideAllTags(true)
 
     let values = value.split(" ")
     if (values.length === 1) {
         let tagsBox = document.querySelector('.edit_panel').querySelector(`#${value}`)
         if (tagsBox) {
-            event.target.style.background = 'lightgreen'
+            searchField.style.background = 'lightgreen'
             tagsBox.style.display = "block"
+            searchField.style.color = 'darkgreen';
             tagsBox.open = true;
         }
     } else {
+        items = []
         document.querySelector('.edit_panel').querySelectorAll('details').forEach(item => {
-            for (let word of values) {
-                word = word.trim().toLocaleLowerCase()
-                if (word.length < 2) {
-                    continue
+            if (!withValues) {
+                for (let word of values) {
+                    word = word.trim().toLocaleLowerCase()
+                    if (word.length < 2) {
+                        continue
+                    }
+                    if (
+                        (item.id && item.id.toLocaleLowerCase().includes(word))
+                        || (item.dataset.description && item.dataset.description.toLocaleLowerCase().includes(word)
+                        )
+                    ) {
+                        items.push(item)
+                    }
                 }
-                if (
-                    (item.id && item.id.toLocaleLowerCase().includes(word))
-                    || (item.dataset.description && item.dataset.description.toLocaleLowerCase().includes(word))
-                ) {
-                    item.style.display = "block"
-                    event.target.style.background = 'lightblue'
-                }
+            } else {
+                item.querySelectorAll('input, textarea').forEach(input => {
+                    if (input.value.toLocaleLowerCase().includes(value)) {
+                        items.push(item)
+                    }
+                })
             }
         })
+        if (items.length > 1) {
+            searchField.style.background = 'lightblue'
+            items.forEach(item => {item.style.display = "block"})
+        } else if (items.length === 1) {
+            searchField.style.background = 'lightgreen'
+            items[0].style.display = "block"
+            items[0].open = true;
+        }
     }
-})
+}
 
 
 
