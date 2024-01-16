@@ -254,18 +254,20 @@
                 </div>
                 <br><br>
             </div>
-            <div class="sub_course editor">
+            <div class="sub_course search_editor">
                 <h4>Sub courses:</h4>
                 <input type="text" class="input_adviser" data-table="courses" data-field="name" value="" placeholder="Name of the course">
+                <br>
+                <button class="add_item">add</button>
                 <div class="checkbox_list"></div>
             </div>
-            <div class="technology editor">
+            <div class="technology search_editor">
                 <h4>Technologies:</h4>
                 <input type="text" class="input_adviser" data-table="technologies" data-field="name" value="" placeholder="Name of the technology">
                 <br/>
                 <label>Hours: <input type="number" name="technology__hours" placeholder="count of hours" ></label>
                 &nbsp;&nbsp;
-                <button id="add_technology">add</button>
+                <button class="add_item">add</button>
                 <div class="checkbox_list"></div>
             </div>
             <div style="margin-top: 40px">

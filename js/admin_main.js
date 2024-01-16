@@ -338,14 +338,28 @@ document.querySelectorAll('form .reset').forEach(item => {
 
 document.querySelectorAll('.input_adviser').forEach(item => {
     item.addEventListener('input', event => {
+        event.target.parentElement.querySelector('input').dataset.id = null
+        event.target.parentElement.querySelector('input').style.background = 'white'
+        let listAdviser = event.target.parentElement.parentElement.querySelector('.list_adviser')
+        if (listAdviser) {
+            listAdviser.remove()
+        }
+
         if (event.target.value.length < 3) {
             return false
         }
+
+        listAdviser = document.createElement("ul")
+        listAdviser.classList.add("list_adviser")
+        listAdviser.style.width = event.target.offsetWidth + 'px'
+        listAdviser.style.left = event.target.offsetLeft + 'px'
+        listAdviser.style.top = event.target.offsetTop + event.target.offsetHeight + 'px'
+
         let formData = new FormData();
-        formData.append('form_name', 'adviserSearch');
-        formData.append('field', event.target.dataset.field);
-        formData.append('table', event.target.dataset.table);
-        formData.append('value', event.target.value);
+        formData.append('form_name', 'adviserSearch')
+        formData.append('field', event.target.dataset.field)
+        formData.append('table', event.target.dataset.table)
+        formData.append('value', event.target.value)
 
         fetch('admin_api_controller.php', {
             method: "POST",
@@ -353,29 +367,33 @@ document.querySelectorAll('.input_adviser').forEach(item => {
         }).then(
             response => response.json().then(
                data => {
-                   let listAdviser = event.target.parentElement.parentElement.querySelector('.list_adviser');
-                   if (listAdviser) {
-                       listAdviser.innerHTML = '';
-                   } else {
-                       listAdviser = document.createElement("ul");
-                       listAdviser.classList.add("list_adviser");
-                   }
-                     data.data.forEach(item => {
-                          let li = document.createElement("li");
-                          li.innerText = item.name;
-                          li.dataset.id = item.id;
-                          li.addEventListener('click', event => {
-                            event.target.parentElement.parentElement.querySelector('input').value = event.target.innerText;
-                            event.target.parentElement.parentElement.querySelector('input').dataset.id = event.target.dataset.id;
-                            event.target.parentElement.remove();
-                          })
-                          listAdviser.appendChild(li);
-                     })
-
-                   event.target.parentElement.appendChild(listAdviser);
+                   data.data.forEach(item => {
+                      let li = document.createElement("li")
+                      li.innerText = item.name
+                      li.dataset.jsondata = JSON.stringify(item)
+                      li.addEventListener('click', event => {
+                        let searchInput = event.target.parentElement.parentElement.querySelector('input')
+                          searchInput.value = event.target.innerText
+                          searchInput.dataset.jsondata = item.dataset.jsondata
+                          event.target.parentElement.remove()
+                          searchInput.style.background = 'lightgreen'
+                      })
+                      listAdviser.appendChild(li)
+                   })
+                   event.target.after(listAdviser)
                }
             )
         )
     })
+})
+
+document.querySelectorAll('.search_editor .add_item').forEach(item => {
+    item.addEventListener('click', event => {
+        let itemsBox = event.target.parentElement.querySelector('.checkbox_list')
+        let inputAdviser = event.target.parentElement.querySelector('.input_adviser')
+        let inputAdviserData = JSON.parse(inputAdviser.dataset.jsondata)
+        checkboxList.innerHTML += `<label title="${inputAdviserData.description}"><input type="checkbox" name="technologies__${inputAdviserData.id}" value=0 onchange="this.value = Number(this.checked)">${item}</label>`;
+
+    }
 })
 

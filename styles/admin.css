@@ -330,3 +330,28 @@ button.reset {
     padding-right: 5px;
     padding-left: 5px;
 }
+.list_adviser {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: max-content;
+    background: #e7fce8;
+    border: 1px solid #015959;
+    border-radius: 5px;
+    margin: 0 auto;
+    list-style: disc;
+    z-index: 2;
+}
+.list_adviser li {
+    padding: 2px 5px;
+    margin: 2px 0;
+    text-align: left;
+    background: cadetblue;
+}
+.list_adviser li:hover {
+    background: #c4f6c4;
+}
+
+/*.search_editor {*/
+/*    position: relative;*/
+/*}*/

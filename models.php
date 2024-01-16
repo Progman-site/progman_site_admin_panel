@@ -349,6 +349,17 @@ function getCertificates(?int $id = null): array {
     return $id ? $certificates[0] : $certificates;
 }
 
+function getAdviseList(string $table, string $field, string $value): array {
+    $value = implode("|", array_filter(
+        array_map('trim', explode(' ', strtolower(trim($value)))),
+        fn($item) => strlen($item) > 1)
+    );
+    $adviseList = sqlQuery("
+        SELECT * FROM `{$table}` WHERE `{$field}` REGEXP '{$value}'
+    ");
+    return $adviseList;
+}
+
 function downloadCertificate(int $id): string {
     $certificateData = getCertificates($id);
     $blank = new ImageBlank(__DIR__ . "/images/pg_cert_blank_{$certificateData['blank']}.jpg");

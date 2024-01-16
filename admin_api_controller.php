@@ -33,6 +33,9 @@ try {
         case 'updateSiteInfo':
             printResult(updateSiteInfo());
             break;
+        case 'adviserSearch':
+            printResult(getAdviseList($_POST['table'], $_POST['field'], $_POST['value']));
+            break;
     }
 } catch (Throwable $e) {
     printError([
