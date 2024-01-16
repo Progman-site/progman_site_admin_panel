@@ -31,6 +31,7 @@
     <form class="navigation">
         <input type="submit" class="<?= @$_GET['navigation'] == "certificates" ? "pressed" : "" ?>" name="navigation" value="certificates">
         <input type="submit" class="<?= @$_GET['navigation'] == "setting" ? "pressed" : "" ?>" name="navigation" value="setting">
+        <input type="submit" class="<?= @$_GET['navigation'] == "courses" ? "pressed" : "" ?>" name="navigation" value="courses">
     </form>
 <?php if (@$_GET['navigation'] == "setting") { ?>
     <form class="edit_panel" method="post" enctype="multipart/form-data">
@@ -217,6 +218,65 @@
                     </div>
 
 
+                </div>
+            </details>
+        <?php } ?>
+    </div>
+<?php } ?>
+<?php if (@$_GET['navigation'] == "courses") { ?>
+    <div class="edit_panel courses price_list">
+        <h3>Certificates management</h3>
+        <div id="new_price_item">
+            <b>Generate a NEW one</b>
+            <div>
+                <input type="text" class="input_adviser" data-table="courses" data-field="name" name="courses__name" value="" placeholder="Name of the course">
+                <br>
+                <textarea name="courses__description_en" cols="30" rows="10" placeholder="Description of the course (en)"></textarea>
+                <br>
+                <textarea name="courses__description_ru" cols="30" rows="10" placeholder="Description of the course (ru)"></textarea>
+                <br><br>
+                <div>
+                    <label>Level:
+                        <select name="courses__level">
+                            <?php foreach (COURSE_LEVELS as $level) { ?>
+                                <option value="<?= $level ?>"><?= ucfirst($level) ?></option>
+                            <?php } ?>
+                        </select>
+                    </label>
+                    &nbsp;&nbsp;
+                    <label>Type:
+                        <select name="courses__type">
+                            <?php foreach (COURSE_TYPES as $type) { ?>
+                                <option value="<?= $type ?>"><?= ucfirst($type) ?></option>
+                            <?php } ?>
+                        </select>
+                    </label>
+                </div>
+                <br><br>
+            </div>
+            <div class="sub_course editor">
+                <h4>Sub courses:</h4>
+                <input type="text" class="input_adviser" data-table="courses" data-field="name" value="" placeholder="Name of the course">
+                <div class="checkbox_list"></div>
+            </div>
+            <div class="technology editor">
+                <h4>Technologies:</h4>
+                <input type="text" class="input_adviser" data-table="technologies" data-field="name" value="" placeholder="Name of the technology">
+                <br/>
+                <label>Hours: <input type="number" name="technology__hours" placeholder="count of hours" ></label>
+                &nbsp;&nbsp;
+                <button id="add_technology">add</button>
+                <div class="checkbox_list"></div>
+            </div>
+            <div style="margin-top: 40px">
+                <button class="changer" data-task="save" data-id="">CREATE</button>
+            </div>
+        </div>
+
+        <?php $count = 0; foreach ($courses as $item) { ?>
+            <details>
+                <summary><b><?= $item["name"] ?> <?= $item["id"] ?></b> course</summary>
+                <div data-form_name="user_data">
                 </div>
             </details>
         <?php } ?>

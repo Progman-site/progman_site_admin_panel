@@ -335,3 +335,47 @@ document.querySelectorAll('form .reset').forEach(item => {
         location.reload()
     })
 })
+
+document.querySelectorAll('.input_adviser').forEach(item => {
+    item.addEventListener('input', event => {
+        if (event.target.value.length < 3) {
+            return false
+        }
+        let formData = new FormData();
+        formData.append('form_name', 'adviserSearch');
+        formData.append('field', event.target.dataset.field);
+        formData.append('table', event.target.dataset.table);
+        formData.append('value', event.target.value);
+
+        fetch('admin_api_controller.php', {
+            method: "POST",
+            body: formData
+        }).then(
+            response => response.json().then(
+               data => {
+                   let listAdviser = event.target.parentElement.parentElement.querySelector('.list_adviser');
+                   if (listAdviser) {
+                       listAdviser.innerHTML = '';
+                   } else {
+                       listAdviser = document.createElement("ul");
+                       listAdviser.classList.add("list_adviser");
+                   }
+                     data.data.forEach(item => {
+                          let li = document.createElement("li");
+                          li.innerText = item.name;
+                          li.dataset.id = item.id;
+                          li.addEventListener('click', event => {
+                            event.target.parentElement.parentElement.querySelector('input').value = event.target.innerText;
+                            event.target.parentElement.parentElement.querySelector('input').dataset.id = event.target.dataset.id;
+                            event.target.parentElement.remove();
+                          })
+                          listAdviser.appendChild(li);
+                     })
+
+                   event.target.parentElement.appendChild(listAdviser);
+               }
+            )
+        )
+    })
+})
+
