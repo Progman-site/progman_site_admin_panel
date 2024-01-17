@@ -256,18 +256,30 @@
             </div>
             <div class="sub_course search_editor">
                 <h4>Sub courses:</h4>
-                <input type="text" class="input_adviser" data-table="courses" data-field="name" value="" placeholder="Name of the course">
-                <br>
-                <button class="add_item">add</button>
+                <input
+                    type="search"
+                    class="input_adviser"
+                    placeholder="Name of the course"
+                    data-table="courses"
+                    data-field="name"
+                    data-creating=0
+                    data-child_attributes='{"type": "checkbox", "checked": true, "onclick": "return false;", "value": 1}'
+                >
+                <button class="add_item" disabled>add</button>
                 <div class="checkbox_list"></div>
             </div>
             <div class="technology search_editor">
                 <h4>Technologies:</h4>
-                <input type="text" class="input_adviser" data-table="technologies" data-field="name" value="" placeholder="Name of the technology">
-                <br/>
-                <label>Hours: <input type="number" name="technology__hours" placeholder="count of hours" ></label>
-                &nbsp;&nbsp;
-                <button class="add_item">add</button>
+                <input
+                    type="search"
+                    class="input_adviser"
+                    placeholder="Name of the technology"
+                    data-table="technologies"
+                    data-field="name"
+                    data-creating=1
+                    data-child_attributes='{"type": "number", "max": 100, "min": 1}'
+                >
+                <button class="add_item" disabled>add</button>
                 <div class="checkbox_list"></div>
             </div>
             <div style="margin-top: 40px">

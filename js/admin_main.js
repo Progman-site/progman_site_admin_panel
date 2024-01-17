@@ -338,14 +338,20 @@ document.querySelectorAll('form .reset').forEach(item => {
 
 document.querySelectorAll('.input_adviser').forEach(item => {
     item.addEventListener('input', event => {
-        event.target.parentElement.querySelector('input').dataset.id = null
-        event.target.parentElement.querySelector('input').style.background = 'white'
+        let searchInput = event.target
+        let addButton = event.target.parentElement.querySelector('.add_item')
+        addButton.dsiabled = true
+        searchInput.dataset.jsondata = ""
+        searchInput.style.background = 'white'
         let listAdviser = event.target.parentElement.parentElement.querySelector('.list_adviser')
         if (listAdviser) {
             listAdviser.remove()
         }
+        if (searchInput.dataset.creating === "1" && searchInput.value.length > 2) {
+            addButton.disabled = false
+        }
 
-        if (event.target.value.length < 3) {
+        if (searchInput.value.length < 3) {
             return false
         }
 
@@ -372,9 +378,9 @@ document.querySelectorAll('.input_adviser').forEach(item => {
                       li.innerText = item.name
                       li.dataset.jsondata = JSON.stringify(item)
                       li.addEventListener('click', event => {
-                        let searchInput = event.target.parentElement.parentElement.querySelector('input')
                           searchInput.value = event.target.innerText
-                          searchInput.dataset.jsondata = item.dataset.jsondata
+                          searchInput.dataset.jsondata = event.target.dataset.jsondata
+                          addButton.disabled = false
                           event.target.parentElement.remove()
                           searchInput.style.background = 'lightgreen'
                       })
@@ -391,9 +397,71 @@ document.querySelectorAll('.search_editor .add_item').forEach(item => {
     item.addEventListener('click', event => {
         let itemsBox = event.target.parentElement.querySelector('.checkbox_list')
         let inputAdviser = event.target.parentElement.querySelector('.input_adviser')
-        let inputAdviserData = JSON.parse(inputAdviser.dataset.jsondata)
-        checkboxList.innerHTML += `<label title="${inputAdviserData.description}"><input type="checkbox" name="technologies__${inputAdviserData.id}" value=0 onchange="this.value = Number(this.checked)">${item}</label>`;
+        inputAdviser.value = inputAdviser.value.trim()
 
-    }
+        let inputAdviserData
+        if (inputAdviser.dataset.creating === "1" && !inputAdviser.dataset.jsondata && inputAdviser.value.length > 2) {
+            if (itemsBox.querySelector(`input[data-name="${inputAdviser.value}"]`)){
+                alert(`The new item '${inputAdviser.value}' already exists!`)
+                return false
+            }
+            if(!confirm(`Do you want to create a new item '${inputAdviser.value}'`)) {
+                alert('Creation canceled!')
+                return false
+            }
+            inputAdviserData = {
+                name: inputAdviser.value,
+                description: prompt('Write a description for this item'),
+                id: null
+            }
+        } else {
+            inputAdviserData = JSON.parse(inputAdviser.dataset.jsondata)
+            if (itemsBox.querySelector(`input[data-id="${inputAdviserData.id}"]`)){
+                alert('This item already exists!')
+                return false
+            }
+        }
+        addNewSearchEditorItem(inputAdviser, inputAdviserData, itemsBox)
+
+        if (event.target.parentElement.classList.contains('sub_course')){
+            let formData = new FormData()
+            formData.append('form_name', 'getCourseTechnologies')
+            formData.append('course_id', inputAdviserData.id)
+            fetch('admin_api_controller.php', {
+                method: "POST",
+                body: formData
+            }).then(
+                response => response.json().then(
+                    result => {
+                        if (result.status === "ok!") {
+                            let technologiesInputAdviser = document.querySelector('.technology .input_adviser')
+                            let technologiesCheckboxList = document.querySelector('.technology .checkbox_list')
+                            result.data.forEach(item => {
+                                addNewSearchEditorItem(technologiesInputAdviser, item, technologiesCheckboxList)
+                            })
+                        } else {
+                            alert('An unexpected error!');
+                        }
+                    }
+                ))
+        }
+    })
 })
+
+function addNewSearchEditorItem(inputAdviserElement, inputAdviserData, itemsBox) {
+    let childAttributes = JSON.parse(inputAdviserElement.dataset.child_attributes)
+    let label = document.createElement('label')
+    label.title = inputAdviserData.description
+    label.innerHTML += `<strong>${inputAdviserData.name}</strong>`
+    let input = document.createElement('input')
+    input.name = `${inputAdviserElement.dataset.table}__${childAttributes.id}`
+    input.type = childAttributes.type
+    delete childAttributes.type
+    for (let key in childAttributes) {
+        input.setAttribute(key, childAttributes[key])
+    }
+    label.appendChild(input)
+    label.innerHTML += `<span class="remover" onclick="this.parentElement.remove()">✖</span>`
+    itemsBox.appendChild(label)
+}
 

@@ -360,6 +360,14 @@ function getAdviseList(string $table, string $field, string $value): array {
     return $adviseList;
 }
 
+function getCourseTechnologies(int $courseId): array {
+    return sqlQuery("
+        SELECT t.* FROM `course_technology` ct
+        LEFT JOIN `technologies` t ON t.`id` = ct.`technology_id`
+        WHERE ct.`course_id` = '{$courseId}'
+    ");
+}
+
 function downloadCertificate(int $id): string {
     $certificateData = getCertificates($id);
     $blank = new ImageBlank(__DIR__ . "/images/pg_cert_blank_{$certificateData['blank']}.jpg");

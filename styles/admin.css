@@ -133,7 +133,7 @@ button[type="button"]
     margin: 20px;
 }
 
-.edit_panel input[type="text"], input[type="number"], .edit_panel textarea {
+.edit_panel input[type="text"], .edit_panel input[type="search"], input[type="number"], .edit_panel textarea {
     width: 90%;
     padding: 10px 20px;
     margin-top: 10px;
@@ -141,7 +141,7 @@ button[type="button"]
     font-size: 12px;
 }
 @media screen and (max-width: 736px) {
-    .edit_panel input[type="text"], input[type="number"], .edit_panel textarea {
+    .edit_panel input[type="text"], .edit_panel input[type="search"], input[type="number"], .edit_panel textarea {
         width: 88%;
         padding: 10px 10px;
         margin-top: 10px;
@@ -149,16 +149,15 @@ button[type="button"]
         font-size: 12px;
     }
 }
-.price_list input[type="text"], .price_list input[type="number"] {
+.price_list input[type="text"], .price_list input[type="search"], .price_list input[type="number"] {
     width: auto;
 }
 .price_list input[type="number"] {
     width: 60px;
     padding: 5px 10px;
 }
-.price_list input[type="text"] {
+.price_list input[type="text"], .price_list input[type="search"] {
     width: 250px;
-
 }
 .price_list th {
     background: #c1d5d7;
@@ -330,6 +329,13 @@ button.reset {
     padding-right: 5px;
     padding-left: 5px;
 }
+
+.search_editor .add_item  {
+    margin-left: 10px;
+    padding: 2px 5px;
+    border-radius: 10px;
+}
+
 .list_adviser {
     position: absolute;
     bottom: 0;
@@ -352,6 +358,31 @@ button.reset {
     background: #c4f6c4;
 }
 
-/*.search_editor {*/
-/*    position: relative;*/
-/*}*/
+.checkbox_list label{
+    background: lightgreen;
+    font-weight: bold;
+}
+
+.checkbox_list label > strong{
+    margin-left: 10px;
+}
+
+.checkbox_list label > input[type="number"]{
+    margin: 0 10px;
+    float: right;
+}
+.checkbox_list .remover {
+    font-weight: bolder;
+    color: darkred;
+    border: 2px solid black;
+    cursor: pointer;
+    margin: auto 0;
+    padding: 3px 5px;
+    border-radius: 5px;
+    float: right;
+}
+
+.checkbox_list .remover:hover {
+    border-color: darkred;
+    color: black;
+}
