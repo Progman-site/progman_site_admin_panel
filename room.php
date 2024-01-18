@@ -136,7 +136,7 @@
                 <div class="checkbox_list"></div>
             </div>
             <div>
-                <button class="changer" data-task="save" data-id="">GENERATE</button>
+                <button class="changer" data-task="save" data-api_method="updateCertificates" data-id="">GENERATE</button>
             </div>
         </div>
 
@@ -174,7 +174,7 @@
                         <h4>Technologies:</h4>
                     </div>
                     <div>
-                        <button class="changer" title="unblock changing of the certificate" data-task="change" data-id="<?= $item['id']?>">change</button>
+                        <button class="changer" title="unblock changing of the certificate" data-task="change" data-api_method="updateCertificates" data-id="<?= $item['id']?>">change</button>
                         <br/><br/>
                         <button class="deleter" title="delete the certificate" data-id=<?= $item['id']?>>del</button>
                         <br/><br/><br/><br/><br/>
@@ -225,7 +225,7 @@
 <?php } ?>
 <?php if (@$_GET['navigation'] == "courses") { ?>
     <div class="edit_panel courses price_list">
-        <h3>Certificates management</h3>
+        <h3>Courses management</h3>
         <div id="new_price_item">
             <strong>Generate a NEW one</strong>
             <div>
@@ -259,7 +259,7 @@
                 <input
                     type="search"
                     class="input_adviser"
-                    placeholder="Name of the course"
+                    placeholder="Name of the sub course"
                     data-table="courses"
                     data-field="name"
                     data-creating=0
@@ -283,7 +283,7 @@
                 <div class="checkbox_list"></div>
             </div>
             <div style="margin-top: 40px">
-                <button class="changer" data-task="save" data-id="">CREATE</button>
+                <button class="changer" data-task="save" data-api_method="updateCourse" data-id="">CREATE</button>
             </div>
         </div>
 
@@ -308,7 +308,7 @@
                         <div class="checkbox_list">
 
                             <?php if ($item['sub_courses']) {
-                            foreach (explode(",", $item['sub_courses']) as $subCourse) { ?>
+                            foreach ($item['sub_courses'] as $subCourse) { ?>
                                 <label title="<?= $subCourse['description_en'] ?? "no description" ?>">
                                     <?= $subCourse['name'] ?> (<?= $subCourse['level'] ?>/<?= $subCourse['type'] ?>),&nbsp;
                                 </label>
@@ -346,7 +346,7 @@
                         </div>
                     </div>
                     <div style="margin-top: 40px">
-                        <button class="changer" data-task="change" data-id="">CHANGE</button>
+                        <button class="changer" data-task="change" data-api_method="updateCourse" data-id="<?=$item['id'] ?>">CHANGE</button>
                     </div>
                 </div>
             </details>

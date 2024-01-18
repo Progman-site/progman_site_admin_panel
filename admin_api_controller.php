@@ -39,6 +39,9 @@ try {
         case 'getCourseTechnologies':
             printResult(getCourseTechnologies($_POST['course_id']));
             break;
+        case 'updateCourse':
+            printResult(updateCourse($_POST));
+            break;
     }
 } catch (Throwable $e) {
     printError([

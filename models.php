@@ -374,6 +374,76 @@ function getCourseTechnologies(int $courseId): array {
     ");
 }
 
+function updateCourse(array $data) {
+    $subCoursesIds = [];
+    $technologiesIds = [];
+    $newTechnologiesIds = [];
+    foreach ($data as $dataKey => $dataValue) {
+        $itemProps = explode('__', $dataKey);
+        if (str_ends_with($itemProps[1], '_description') || str_ends_with($itemProps[1], '_name')) {
+            continue;
+        }
+        if ($itemProps[0] == 'courses' && is_numeric($itemProps[1])) {
+            $subCourse = sqlQuery("SELECT * FROM `courses` WHERE `id` = '{$itemProps[1]}'", false);
+            if (!$subCourse) {
+                throw new Exception("Error while the sub course(id:{$subCourse}) adding, sub course is not found!");
+            }
+            $subCoursesIds[] = $dataValue;
+        } elseif ($itemProps[0] == 'technologies') {
+            if (str_starts_with($itemProps[1], 'new_')) {
+                $technologyId = sqlQuery("INSERT INTO `technologies` SET `name` = '{$data["{$dataKey}_name"]}', `description` = '{$data["{$dataKey}_description"]}';");
+                if (!$technologyId) {
+                    throw new Exception("Error while saving the technology(name:{$dataValue})!");
+                }
+                $newTechnologiesIds[$technologyId] = $data["{$dataKey}"];
+            } else {
+                $technology = sqlQuery("SELECT * FROM `technologies` WHERE `id` = '{$itemProps[1]}'", false);
+                if (!$technology) {
+                    throw new Exception("Error while the technology(id:{$itemProps[1]}) adding, technology is not found!");
+                }
+                $technologiesIds[] = $technology['id'];
+            }
+        }
+    }
+    $subCoursesIds = implode(',', $subCoursesIds);
+
+
+    if (isset($data['id'])) {
+        $course = sqlQuery("SELECT * FROM `courses` WHERE `id` = '{$data['id']}'", false);
+        $course_id = $course['id'];
+        sqlQuery("
+        UPDATE `courses` SET 
+            `level` = '{$data['courses__level']}',
+            `description_en` = '{$data['courses__description_en']}',
+            `description_ru` = '{$data['courses__description_ru']}',
+            WHERE `id` = {$course['id']};
+        " , false);
+    } else {
+        $course_id = sqlQuery("
+        INSERT INTO `courses` SET 
+            `name` = '{$data['courses__name']}',
+            `level` = '{$data['courses__level']}',
+            `type` = '{$data['courses__type']}',
+            `description_en` = '{$data['courses__description_en']}',
+            `description_ru` = '{$data['courses__description_ru']}',
+            `sub_courses_ids` = '{$subCoursesIds}';
+          ", false);
+    }
+
+    $courseTechnologies = sqlQuery("SELECT * FROM `course_technology` WHERE `course_id` = '{$course_id}'");
+    foreach ($courseTechnologies as $courseTechnology) {
+        if (!in_array($courseTechnology['technology_id'], $technologiesIds)) {
+            sqlQuery("DELETE FROM `course_technology` WHERE `id` = '{$courseTechnology['id']}';");
+            continue;
+        }
+        sqlQuery("UPDATE `course_technology` SET `hours` = '{$data["technologies__{$courseTechnology['technology_id']}_hours"]}' WHERE `id` = '{$courseTechnology['id']}';");
+    }
+    foreach ($newTechnologiesIds as $newTechnologyId => $technologyHours) {
+        sqlQuery("INSERT INTO `course_technology` SET `course_id` = '{$course_id}', `technology_id` = '{$newTechnologyId}', `hours` = {$technologyHours};");
+    }
+    return "The course(id:{$course_id}) is successfully updated/created!";
+}
+
 function downloadCertificate(int $id): string {
     $certificateData = getCertificates($id);
     $blank = new ImageBlank(__DIR__ . "/images/pg_cert_blank_{$certificateData['blank']}.jpg");

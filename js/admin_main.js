@@ -19,21 +19,21 @@ document.querySelectorAll('.changer').forEach(key => {
                     return false;
                 }
             } else {
-                if (!confirm(`Do you really want to create a certificate?`)) {
+                if (!confirm(`Do you really want to create a new one?`)) {
                     alert("All changes have been canceled!")
                     location.reload()
                     return false;
                 }
             }
             let formData = new FormData();
-            formData.append('form_name', 'updateCertificates');
+            formData.append('form_name', event.target.dataset.api_method);
             if (event.target.dataset.id) {
                 formData.append('id', event.target.dataset.id);
             }
             let inputs = event.target.parentElement.parentElement.querySelectorAll('input, select');
             let textareas = event.target.parentElement.parentElement.querySelectorAll('textarea');
             inputs.forEach(item => {
-                if (!item.readOnly) {
+                if (item.name && !item.readOnly && item.type !== 'search') {
                     formData.append(item.name, item.value);
                 }
             });
@@ -52,7 +52,7 @@ document.querySelectorAll('.changer').forEach(key => {
                         console.log(result);
                         if (result.status === "ok!") {
                             alert(result.data);
-                            // location.reload();
+                            location.reload();
                         } else {
                             alert('An unexpected error!');
                         }
@@ -339,9 +339,8 @@ document.querySelectorAll('form .reset').forEach(item => {
 document.querySelectorAll('.input_adviser').forEach(item => {
     item.addEventListener('input', event => {
         let searchInput = event.target
-        let addButton = event.target.parentElement.querySelector('.add_item')
+        let addButton = event.target.parentElement.querySelector('.add_item') || {}
         addButton.disabled = true
-        console.log(addButton)
         searchInput.dataset.jsondata = ""
         searchInput.style.background = 'white'
         let listAdviser = event.target.parentElement.parentElement.querySelector('.list_adviser')
@@ -455,7 +454,7 @@ function addNewSearchEditorItem(inputAdviserElement, inputAdviserData, itemsBox)
     label.title = inputAdviserData.description
     label.innerHTML += `<strong>${inputAdviserData.name}</strong>`
     let input = document.createElement('input')
-    input.name = `${inputAdviserElement.dataset.table}__${childAttributes.id}`
+    input.name = `${inputAdviserElement.dataset.table}__${childAttributes.id || inputAdviserData.id || `new_${itemsBox.childElementCount}`}`
     input.type = childAttributes.type
     delete childAttributes.type
     for (let key in childAttributes) {
@@ -467,6 +466,16 @@ function addNewSearchEditorItem(inputAdviserElement, inputAdviserData, itemsBox)
     input.dataset.id = inputAdviserData.id
     input.dataset.name = inputAdviserData.name
     label.appendChild(input)
+    let name = document.createElement('input')
+    name.type = 'hidden'
+    name.name = `${input.name}_name`
+    name.value = inputAdviserData.name
+    label.appendChild(name)
+    let description = document.createElement('input')
+    description.type = 'hidden'
+    description.name = `${input.name}_description`
+    description.value = inputAdviserData.description
+    label.appendChild(description)
     label.innerHTML += `<span class="remover" onclick="this.parentElement.remove()">✖</span>`
     itemsBox.appendChild(label)
 }
