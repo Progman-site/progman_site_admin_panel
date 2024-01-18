@@ -287,6 +287,7 @@ function getCourses():array {
         FROM `courses` c
         INNER JOIN `course_technology` tc ON c.`id` = tc.`course_id`
         INNER JOIN `technologies` t ON t.`id` = tc.`technology_id`
+        GROUP BY c.`id`
         ");
 
     $courses = [];
@@ -295,13 +296,17 @@ function getCourses():array {
         $technologiesIds = explode(',', $course['technologies_ids']);
         $technologiesNames = explode(',', $course['technologies']);
         $technologiesDescriptions = explode(',', $course['technologies_descriptions']);
+        $technologiesHours = explode(',', $course['technologies_hours']);
         foreach ($technologiesIds as $technologyKey => $technologyId) {
             $courses[$course['id']]['technologies_arr'][$technologyId] = [
                 'id' => $technologyId,
                 'name' => $technologiesNames[$technologyKey],
                 'descriptions' => $technologiesDescriptions[$technologyKey],
+                'hours' => $technologiesHours[$technologyKey],
             ];
         }
+        $courses[$course['id']]["sub_courses"] = $course['sub_courses_ids'] ?
+            sqlQuery("SELECT * FROM `courses` WHERE `id` IN ({$course['sub_courses_ids']});") : null;
     }
     return $courses;
 }

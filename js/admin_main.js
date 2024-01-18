@@ -464,6 +464,8 @@ function addNewSearchEditorItem(inputAdviserElement, inputAdviserData, itemsBox)
     if (inputAdviserData.hours !== undefined) {
         input.setAttribute('value', inputAdviserData.hours)
     }
+    input.dataset.id = inputAdviserData.id
+    input.dataset.name = inputAdviserData.name
     label.appendChild(input)
     label.innerHTML += `<span class="remover" onclick="this.parentElement.remove()">✖</span>`
     itemsBox.appendChild(label)

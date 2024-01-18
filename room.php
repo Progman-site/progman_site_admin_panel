@@ -227,7 +227,7 @@
     <div class="edit_panel courses price_list">
         <h3>Certificates management</h3>
         <div id="new_price_item">
-            <b>Generate a NEW one</b>
+            <strong>Generate a NEW one</strong>
             <div>
                 <input type="text" class="input_adviser" data-table="courses" data-field="name" name="courses__name" value="" placeholder="Name of the course">
                 <br>
@@ -289,9 +289,65 @@
 
         <?php $count = 0; foreach ($courses as $item) { ?>
             <details>
-                <summary><b><?= $item["name"] ?> <?= $item["id"] ?></b> course</summary>
+                <summary><strong><?= $item["name"] ?></strong> course (<?= $item["id"] ?>)</summary>
                 <div data-form_name="user_data">
+                    <div>
+                        <textarea name="courses__description_en" cols="30" rows="10" placeholder="Description of the course (en)"><?= $item["description_en"] ?></textarea>
+                        <br>
+                        <textarea name="courses__description_ru" cols="30" rows="10" placeholder="Description of the course (ru)"><?= $item["description_ru"] ?></textarea>
+                        <br><br>
+                        <div>
+                            <label>Level: <strong><?= $item["level"] ?></strong></label>
+                            &nbsp;&nbsp;
+                            <label>Type: <strong><?= $item["type"] ?></strong></label>
+                        </div>
+                        <br><br>
+                    </div>
+                    <div class="sub_course search_editor">
+                        <h4>Sub courses:</h4>
+                        <div class="checkbox_list">
 
+                            <?php if ($item['sub_courses']) {
+                            foreach (explode(",", $item['sub_courses']) as $subCourse) { ?>
+                                <label title="<?= $subCourse['description_en'] ?? "no description" ?>">
+                                    <?= $subCourse['name'] ?> (<?= $subCourse['level'] ?>/<?= $subCourse['type'] ?>),&nbsp;
+                                </label>
+                            <?php }} else { echo "no sub courses......"; } ?>
+                        </div>
+                    </div>
+                    <div class="technology search_editor">
+                        <h4>Technologies:</h4>
+                        <input
+                                type="search"
+                                class="input_adviser"
+                                placeholder="Name of the technology"
+                                data-table="technologies"
+                                data-field="name"
+                                data-creating=1
+                                data-child_attributes='{"type": "number", "max": 100, "min": 1}'
+                        >
+                        <button class="add_item" disabled>add</button>
+                        <div class="checkbox_list">
+                            <?php foreach ($item['technologies_arr'] as $technologyData) { ?>
+                                <label title="<?= $technologyData['descriptions'] ?>">
+                                    <?= $technologyData['name'] ?>
+                                    <input
+                                            type="number"
+                                            name="technologies__<?= $technologyData['id'] ?>"
+                                            value="<?= $technologyData['hours'] ?>"
+                                            data-id="<?= $technologyData['id'] ?>"
+                                            data-name="<?= $technologyData['name'] ?>"
+                                            checked
+                                            disabled
+                                    >
+                                    <span class="remover" onclick="this.parentElement.remove()">✖</span>
+                                </label>
+                            <?php } ?>
+                        </div>
+                    </div>
+                    <div style="margin-top: 40px">
+                        <button class="changer" data-task="change" data-id="">CHANGE</button>
+                    </div>
                 </div>
             </details>
         <?php } ?>
