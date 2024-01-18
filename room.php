@@ -291,6 +291,7 @@
             <details>
                 <summary><b><?= $item["name"] ?> <?= $item["id"] ?></b> course</summary>
                 <div data-form_name="user_data">
+
                 </div>
             </details>
         <?php } ?>

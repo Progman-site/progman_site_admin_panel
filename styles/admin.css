@@ -329,6 +329,10 @@ button.reset {
     padding-right: 5px;
     padding-left: 5px;
 }
+.search_editor .input_adviser {
+    margin-bottom: 10px;
+    font-weight: bolder;
+}
 
 .search_editor .add_item  {
     margin-left: 10px;
@@ -370,6 +374,9 @@ button.reset {
 .checkbox_list label > input[type="number"]{
     margin: 0 10px;
     float: right;
+    font-weight: bolder;
+    text-align: right;
+    padding-right: 5px;
 }
 .checkbox_list .remover {
     font-weight: bolder;

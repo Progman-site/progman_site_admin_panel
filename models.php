@@ -282,7 +282,8 @@ function getCourses():array {
         SELECT c.*,
                GROUP_CONCAT(t.`name`) AS 'technologies',
                GROUP_CONCAT(t.`id`) AS 'technologies_ids',
-               GROUP_CONCAT(t.`description`) AS 'technologies_descriptions'
+               GROUP_CONCAT(t.`description`) AS 'technologies_descriptions',
+               GROUP_CONCAT(tc.`hours`) AS 'technologies_hours'
         FROM `courses` c
         INNER JOIN `course_technology` tc ON c.`id` = tc.`course_id`
         INNER JOIN `technologies` t ON t.`id` = tc.`technology_id`
@@ -362,7 +363,7 @@ function getAdviseList(string $table, string $field, string $value): array {
 
 function getCourseTechnologies(int $courseId): array {
     return sqlQuery("
-        SELECT t.* FROM `course_technology` ct
+        SELECT t.*, ct.`hours` FROM `course_technology` ct
         LEFT JOIN `technologies` t ON t.`id` = ct.`technology_id`
         WHERE ct.`course_id` = '{$courseId}'
     ");

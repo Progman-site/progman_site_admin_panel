@@ -340,7 +340,8 @@ document.querySelectorAll('.input_adviser').forEach(item => {
     item.addEventListener('input', event => {
         let searchInput = event.target
         let addButton = event.target.parentElement.querySelector('.add_item')
-        addButton.dsiabled = true
+        addButton.disabled = true
+        console.log(addButton)
         searchInput.dataset.jsondata = ""
         searchInput.style.background = 'white'
         let listAdviser = event.target.parentElement.parentElement.querySelector('.list_adviser')
@@ -459,6 +460,9 @@ function addNewSearchEditorItem(inputAdviserElement, inputAdviserData, itemsBox)
     delete childAttributes.type
     for (let key in childAttributes) {
         input.setAttribute(key, childAttributes[key])
+    }
+    if (inputAdviserData.hours !== undefined) {
+        input.setAttribute('value', inputAdviserData.hours)
     }
     label.appendChild(input)
     label.innerHTML += `<span class="remover" onclick="this.parentElement.remove()">✖</span>`
