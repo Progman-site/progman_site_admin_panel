@@ -310,7 +310,7 @@
                             <?php if ($item['sub_courses']) {
                             foreach ($item['sub_courses'] as $subCourse) { ?>
                                 <label title="<?= $subCourse['description_en'] ?? "no description" ?>">
-                                    <?= $subCourse['name'] ?> (<?= $subCourse['level'] ?>/<?= $subCourse['type'] ?>),&nbsp;
+                                    <?= $subCourse['name'] ?> (<?= $subCourse['level'] ?>/<?= $subCourse['type'] ?>)
                                 </label>
                             <?php }} else { echo "no sub courses......"; } ?>
                         </div>

@@ -438,6 +438,11 @@ function updateCourse(array $data) {
         }
         sqlQuery("UPDATE `course_technology` SET `hours` = '{$data["technologies__{$courseTechnology['technology_id']}_hours"]}' WHERE `id` = '{$courseTechnology['id']}';");
     }
+    foreach ($technologiesIds as $technologyId) {
+        if (!in_array($technologyId, array_column($courseTechnologies, 'technology_id'))) {
+            sqlQuery("INSERT INTO `course_technology` SET `course_id` = '{$course_id}', `technology_id` = '{$technologyId}', `hours` = '{$data["technologies__{$technologyId}"]}';");
+        }
+    }
     foreach ($newTechnologiesIds as $newTechnologyId => $technologyHours) {
         sqlQuery("INSERT INTO `course_technology` SET `course_id` = '{$course_id}', `technology_id` = '{$newTechnologyId}', `hours` = {$technologyHours};");
     }
