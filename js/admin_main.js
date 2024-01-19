@@ -417,7 +417,7 @@ document.querySelectorAll('.search_editor .add_item').forEach(item => {
         } else {
             inputAdviserData = JSON.parse(inputAdviser.dataset.jsondata)
             if (itemsBox.querySelector(`input[data-id="${inputAdviserData.id}"]`)){
-                alert('This item already exists!')
+                alert(`This item "${inputAdviserData.name}" already exists!`)
                 return false
             }
         }
@@ -437,6 +437,10 @@ document.querySelectorAll('.search_editor .add_item').forEach(item => {
                             let technologiesInputAdviser = document.querySelector('.technology .input_adviser')
                             let technologiesCheckboxList = document.querySelector('.technology .checkbox_list')
                             result.data.forEach(item => {
+                                if (technologiesCheckboxList.querySelector(`input[data-id="${item.id}"]`)){
+                                    alert(`This item "${item.name}" already exists!`)
+                                    return false
+                                }
                                 addNewSearchEditorItem(technologiesInputAdviser, item, technologiesCheckboxList)
                             })
                         } else {
