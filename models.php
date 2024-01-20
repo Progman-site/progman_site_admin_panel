@@ -460,6 +460,7 @@ function delCourse(int $id): string {
     ) {
         return "The course(id:{$course['id']}) is successfully deleted from the database!";
     }
+    return "Error while deleting the course(id:{$course['id']})!";
 }
 
 function downloadCertificate(int $id): string {
