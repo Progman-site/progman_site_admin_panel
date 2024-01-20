@@ -184,14 +184,14 @@ document.querySelectorAll('.deleter').forEach(key => {
     key.addEventListener('click', event => {
         let id = event.target.dataset.id;
         if (
-            !confirm(`Do you really want to remove the certificate(id:${id})\n from database forever?`)
+            !confirm(`Do you really want to remove the object(id:${id})\n from database forever?`)
             || prompt(`Write: 'delete #${id}'`) !== `delete #${id}`
         ) {
             alert("Deletion cancelled!")
             return false;
         }
         let formData = new FormData();
-        formData.append('form_name', 'delCertificate');
+        formData.append('form_name', event.target.dataset.api_method);
         formData.append('id', event.target.dataset.id);
 
         fetch('admin_api_controller.php', {

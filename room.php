@@ -176,7 +176,7 @@
                     <div>
                         <button class="changer" title="unblock changing of the certificate" data-task="change" data-api_method="updateCertificates" data-id="<?= $item['id']?>">change</button>
                         <br/><br/>
-                        <button class="deleter" title="delete the certificate" data-id=<?= $item['id']?>>del</button>
+                        <button class="deleter" title="delete the certificate" data-id=<?= $item['id']?> data-api_method="delCertificate">del</button>
                         <br/><br/><br/><br/><br/>
                         <button title="Downloading the graphic picture of the certificate" onclick="downloadCertificate(<?= $item['id']?>, this.parentNode.parentNode)">DOWNLOAD</button>
                     </div>
@@ -347,6 +347,7 @@
                     </div>
                     <div style="margin-top: 40px">
                         <button class="changer" data-task="change" data-api_method="updateCourse" data-id="<?=$item['id'] ?>">CHANGE</button>
+                        <button class="deleter" title="delete the course" data-id=<?= $item['id']?> data-api_method="delCourse">del</button>
                     </div>
                 </div>
             </details>

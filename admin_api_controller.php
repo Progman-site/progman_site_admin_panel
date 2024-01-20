@@ -42,6 +42,9 @@ try {
         case 'updateCourse':
             printResult(updateCourse($_POST));
             break;
+        case 'delCourse':
+            printResult(delCourse($_POST['id']));
+            break;
     }
 } catch (Throwable $e) {
     printError([

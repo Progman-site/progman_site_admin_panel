@@ -449,6 +449,19 @@ function updateCourse(array $data) {
     return "The course(id:{$course_id}) is successfully updated/created!";
 }
 
+function delCourse(int $id): string {
+    $course = sqlQuery("SELECT * FROM `courses` WHERE `id` = {$id}", false);
+    if (!$course) {
+        throw new Exception("The course(id:{$id}) is not found!");
+    }
+    if (
+        sqlQuery("DELETE FROM `course_technology` WHERE `course_id` = {$id};")
+        && sqlQuery("DELETE FROM `courses` WHERE `id` = $id;")
+    ) {
+        return "The course(id:{$course['id']}) is successfully deleted from the database!";
+    }
+}
+
 function downloadCertificate(int $id): string {
     $certificateData = getCertificates($id);
     $blank = new ImageBlank(__DIR__ . "/images/pg_cert_blank_{$certificateData['blank']}.jpg");
