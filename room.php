@@ -292,13 +292,13 @@
                 <summary><strong><?= $item["name"] ?></strong> course (<?= $item["id"] ?>)</summary>
                 <div data-form_name="user_data">
                     <div>
-                        <textarea name="courses__description_en" cols="30" rows="10" placeholder="Description of the course (en)"><?= $item["description_en"] ?></textarea>
+                        <textarea name="courses__description_en" cols="30" rows="10" placeholder="Description of the course (en)" disabled><?= $item["description_en"] ?></textarea>
                         <br>
-                        <textarea name="courses__description_ru" cols="30" rows="10" placeholder="Description of the course (ru)"><?= $item["description_ru"] ?></textarea>
+                        <textarea name="courses__description_ru" cols="30" rows="10" placeholder="Description of the course (ru)" disabled><?= $item["description_ru"] ?></textarea>
                         <br><br>
                         <div>
                             <label>Level:
-                                <select name="courses__level">
+                                <select name="courses__level" disabled>
                                     <?php foreach (COURSE_LEVELS as $level) { ?>
                                         <option value="<?= $level ?>" <?= $type == $item["level"] ? "selected" : "" ?> ><?= ucfirst($level) ?></option>
                                     <?php } ?>
@@ -306,7 +306,7 @@
                             </label>
                             &nbsp;&nbsp;
                             <label>Type:
-                                <select name="courses__type">
+                                <select name="courses__type" disabled>
                                     <?php foreach (COURSE_TYPES as $type) { ?>
                                         <option value="<?= $type ?>" <?= $type == $item["type"] ? "selected" : "" ?> ><?= ucfirst($type) ?></option>
                                     <?php } ?>
