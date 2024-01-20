@@ -282,11 +282,11 @@ function getCourses():array {
         SELECT c.*,
                GROUP_CONCAT(t.`name`) AS 'technologies',
                GROUP_CONCAT(t.`id`) AS 'technologies_ids',
-               GROUP_CONCAT(t.`description`) AS 'technologies_descriptions',
+               GROUP_CONCAT(t.`description` SEPARATOR '<~>') AS 'technologies_descriptions',
                GROUP_CONCAT(tc.`hours`) AS 'technologies_hours'
         FROM `courses` c
-        INNER JOIN `course_technology` tc ON c.`id` = tc.`course_id`
-        INNER JOIN `technologies` t ON t.`id` = tc.`technology_id`
+        LEFT JOIN `course_technology` tc ON c.`id` = tc.`course_id`
+        LEFT JOIN `technologies` t ON t.`id` = tc.`technology_id`
         GROUP BY c.`id`
         ");
 
@@ -295,7 +295,7 @@ function getCourses():array {
         $courses[$course['id']] = $course;
         $technologiesIds = explode(',', $course['technologies_ids']);
         $technologiesNames = explode(',', $course['technologies']);
-        $technologiesDescriptions = explode(',', $course['technologies_descriptions']);
+        $technologiesDescriptions = explode('<~>', $course['technologies_descriptions']);
         $technologiesHours = explode(',', $course['technologies_hours']);
         foreach ($technologiesIds as $technologyKey => $technologyId) {
             $courses[$course['id']]['technologies_arr'][$technologyId] = [
@@ -392,7 +392,7 @@ function updateCourse(array $data) {
             if (!$subCourse) {
                 throw new Exception("Error while the sub course(id:{$subCourse}) adding, sub course is not found!");
             }
-            $subCoursesIds[] = $dataValue;
+            $subCoursesIds[] = $itemProps[1];
         } elseif ($itemProps[0] == 'technologies') {
             if (str_starts_with($itemProps[1], 'new_')) {
                 $technologyId = sqlQuery("INSERT INTO `technologies` SET `name` = '{$data["{$dataKey}_name"]}', `description` = '{$data["{$dataKey}_description"]}';");
@@ -420,7 +420,8 @@ function updateCourse(array $data) {
             `level` = '{$data['courses__level']}',
             `type` = '{$data['courses__type']}',
             `description_en` = '{$data['courses__description_en']}',
-            `description_ru` = '{$data['courses__description_ru']}'
+            `description_ru` = '{$data['courses__description_ru']}',
+            `sub_courses_ids` = '{$subCoursesIds}'
             WHERE `id` = '{$course['id']}';
         " , false);
     } else {

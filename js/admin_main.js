@@ -383,6 +383,7 @@ document.querySelectorAll('.input_adviser').forEach(item => {
                           addButton.disabled = false
                           event.target.parentElement.remove()
                           searchInput.style.background = 'lightgreen'
+                          listAdviser.innerHTML = ''
                       })
                       listAdviser.appendChild(li)
                    })
@@ -397,6 +398,8 @@ document.querySelectorAll('.search_editor .add_item').forEach(item => {
     item.addEventListener('click', event => {
         let itemsBox = event.target.parentElement.querySelector('.checkbox_list')
         let inputAdviser = event.target.parentElement.querySelector('.input_adviser')
+        let listAdviser = event.target.parentElement.querySelector('.list_adviser')
+
         inputAdviser.value = inputAdviser.value.trim()
 
         let inputAdviserData
@@ -421,8 +424,14 @@ document.querySelectorAll('.search_editor .add_item').forEach(item => {
                 return false
             }
         }
+        if (listAdviser) {
+            listAdviser.remove()
+        }
         addNewSearchEditorItem(inputAdviser, inputAdviserData, itemsBox)
-
+        inputAdviser.value = null
+        inputAdviser.dataset.jsondata = ""
+        inputAdviser.style.background = 'white'
+        event.target.disabled = true
         if (event.target.parentElement.classList.contains('sub_course')){
             let formData = new FormData()
             formData.append('form_name', 'getCourseTechnologies')

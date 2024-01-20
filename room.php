@@ -317,11 +317,26 @@
                     </div>
                     <div class="sub_course search_editor">
                         <h4>Sub courses:</h4>
+                        <input
+                            type="search"
+                            class="input_adviser"
+                            placeholder="Name of the sub course"
+                            data-table="courses"
+                            data-field="name"
+                            data-creating=0
+                            data-child_attributes='{"type": "checkbox", "checked": true, "onclick": "return false;", "value": 1}'
+                            disabled
+                        >
+                        <button class="add_item" disabled>add</button>
                         <div class="checkbox_list">
                             <?php if ($item['sub_courses']) {
                             foreach ($item['sub_courses'] as $subCourse) { ?>
                                 <label title="<?= $subCourse['description_en'] ?? "no description" ?>">
-                                    <?= $subCourse['name'] ?> (<?= $subCourse['level'] ?>/<?= $subCourse['type'] ?>)
+                                    <strong><?= $subCourse['name'] ?></strong> (<?= $subCourse['level'] ?>/<?= $subCourse['type'] ?>)
+                                    <input name="courses__<?= $subCourse['id'] ?>" type="checkbox" ="return false;" value="1" data-id="<?= $subCourse['id'] ?>" data-name="<?= $subCourse['name'] ?>" checked disabled>
+                                    <input type="hidden" name="courses__<?= $subCourse['id'] ?>_name" value="<?= $subCourse['name'] ?>" >
+                                    <input type="hidden" name="courses__<?= $subCourse['id'] ?>_description" value="<?= $subCourse['description_en'] ?>" >
+                                    <span class="remover" onclick="this.parentElement.querySelector('input').disabled || this.parentElement.remove()">✖</span>
                                 </label>
                             <?php }} else { echo "no sub courses......"; } ?>
                         </div>
@@ -336,6 +351,7 @@
                                 data-field="name"
                                 data-creating=1
                                 data-child_attributes='{"type": "number", "max": 100, "min": 1}'
+                                disabled
                         >
                         <button class="add_item" disabled>add</button>
                         <div class="checkbox_list">

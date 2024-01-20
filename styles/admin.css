@@ -365,6 +365,7 @@ button.reset {
 .checkbox_list label{
     background: lightgreen;
     font-weight: bold;
+    padding-left: 10px;
 }
 
 .checkbox_list label > strong{
@@ -384,7 +385,7 @@ button.reset {
     border: 2px solid black;
     cursor: pointer;
     margin: auto 0;
-    padding: 3px 5px;
+    padding: 2px 5px;
     border-radius: 5px;
     float: right;
 }
