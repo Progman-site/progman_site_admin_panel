@@ -387,7 +387,10 @@ function updateCourse(array $data) {
             continue;
         }
         $itemProps = explode('__', $dataKey);
-        if (str_ends_with($itemProps[1], '_description') || str_ends_with($itemProps[1], '_name')) {
+        if (str_ends_with($itemProps[1], '_description')
+            || str_ends_with($itemProps[1], '_name')
+            || str_ends_with($itemProps[1], '_type')
+        ) {
             continue;
         }
         if ($itemProps[0] == 'courses' && is_numeric($itemProps[1])) {
@@ -463,6 +466,29 @@ function delCourse(int $id): string {
     if (!$course) {
         throw new Exception("The course(id:{$id}) is not found!");
     }
+
+    $courses = sqlQuery("SELECT * FROM `courses`");
+    $deleteExceptions = [];
+    foreach ($courses as $courseItem) {
+        if (in_array($id, explode(',', $courseItem['sub_courses_ids']))) {
+            $deleteExceptions[] = "as a sub course for the course(id:{$courseItem['id']})\n\n";
+        }
+    }
+    $certificates = sqlQuery("SELECT * FROM `certificates` WHERE `course_id` = {$id}");
+    if (!empty($certificates)) {
+        $certificates = implode(",\n", array_column($certificates, 'name'));
+        $deleteExceptions[] = "as a course for the certificates:\n{$certificates}\n\n";
+    }
+    $ruqeusts = sqlQuery("SELECT * FROM `requests` WHERE `course_id` = {$id}");
+    if (!empty($ruqeusts)) {
+        $ruqeusts = implode(",\n", array_column($ruqeusts, 'name'));
+        $deleteExceptions[] = "as a course for the requests:\n{$ruqeusts}\n\n";
+    }
+
+    if (!empty($deleteExceptions)) {
+        throw new Exception("The course(id:{$course['id']}) can not be deleted because it is used:\n" . implode("\n", $deleteExceptions));
+    }
+
     if (
         sqlQuery("DELETE FROM `course_technology` WHERE `course_id` = {$id};")
         && sqlQuery("DELETE FROM `courses` WHERE `id` = $id;")
