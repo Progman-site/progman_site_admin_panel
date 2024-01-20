@@ -480,7 +480,7 @@ function addNewSearchEditorItem(inputAdviserElement, inputAdviserData, itemsBox)
     description.name = `${input.name}_description`
     description.value = inputAdviserData.description
     label.appendChild(description)
-    label.innerHTML += `<span class="remover" onclick="this.parentElement.remove()">✖</span>`
+    label.innerHTML += `<span class="remover" onclick="this.parentElement.querySelector('input').disabled || this.parentElement.remove()">✖</span>`
     itemsBox.appendChild(label)
 }
 

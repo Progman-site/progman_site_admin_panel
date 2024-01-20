@@ -378,7 +378,11 @@ function updateCourse(array $data) {
     $subCoursesIds = [];
     $technologiesIds = [];
     $newTechnologiesIds = [];
+
     foreach ($data as $dataKey => $dataValue) {
+        if ($dataKey == "id") {
+            continue;
+        }
         $itemProps = explode('__', $dataKey);
         if (str_ends_with($itemProps[1], '_description') || str_ends_with($itemProps[1], '_name')) {
             continue;
@@ -414,9 +418,10 @@ function updateCourse(array $data) {
         sqlQuery("
         UPDATE `courses` SET 
             `level` = '{$data['courses__level']}',
+            `type` = '{$data['courses__type']}',
             `description_en` = '{$data['courses__description_en']}',
-            `description_ru` = '{$data['courses__description_ru']}',
-            WHERE `id` = {$course['id']};
+            `description_ru` = '{$data['courses__description_ru']}'
+            WHERE `id` = '{$course['id']}';
         " , false);
     } else {
         $course_id = sqlQuery("
@@ -436,7 +441,7 @@ function updateCourse(array $data) {
             sqlQuery("DELETE FROM `course_technology` WHERE `id` = '{$courseTechnology['id']}';");
             continue;
         }
-        sqlQuery("UPDATE `course_technology` SET `hours` = '{$data["technologies__{$courseTechnology['technology_id']}_hours"]}' WHERE `id` = '{$courseTechnology['id']}';");
+        sqlQuery("UPDATE `course_technology` SET `hours` = '{$data["technologies__{$courseTechnology['technology_id']}"]}' WHERE `id` = '{$courseTechnology['id']}';");
     }
     foreach ($technologiesIds as $technologyId) {
         if (!in_array($technologyId, array_column($courseTechnologies, 'technology_id'))) {

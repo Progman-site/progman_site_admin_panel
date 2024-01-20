@@ -297,16 +297,27 @@
                         <textarea name="courses__description_ru" cols="30" rows="10" placeholder="Description of the course (ru)"><?= $item["description_ru"] ?></textarea>
                         <br><br>
                         <div>
-                            <label>Level: <strong><?= $item["level"] ?></strong></label>
+                            <label>Level:
+                                <select name="courses__level">
+                                    <?php foreach (COURSE_LEVELS as $level) { ?>
+                                        <option value="<?= $level ?>" <?= $type == $item["level"] ? "selected" : "" ?> ><?= ucfirst($level) ?></option>
+                                    <?php } ?>
+                                </select>
+                            </label>
                             &nbsp;&nbsp;
-                            <label>Type: <strong><?= $item["type"] ?></strong></label>
+                            <label>Type:
+                                <select name="courses__type">
+                                    <?php foreach (COURSE_TYPES as $type) { ?>
+                                        <option value="<?= $type ?>" <?= $type == $item["type"] ? "selected" : "" ?> ><?= ucfirst($type) ?></option>
+                                    <?php } ?>
+                                </select>
+                            </label>
                         </div>
                         <br><br>
                     </div>
                     <div class="sub_course search_editor">
                         <h4>Sub courses:</h4>
                         <div class="checkbox_list">
-
                             <?php if ($item['sub_courses']) {
                             foreach ($item['sub_courses'] as $subCourse) { ?>
                                 <label title="<?= $subCourse['description_en'] ?? "no description" ?>">
@@ -340,7 +351,7 @@
                                             checked
                                             disabled
                                     >
-                                    <span class="remover" onclick="this.parentElement.remove()">✖</span>
+                                    <span class="remover" onclick="this.parentElement.querySelector('input').disabled || this.parentElement.remove()">✖</span>
                                 </label>
                             <?php } ?>
                         </div>
