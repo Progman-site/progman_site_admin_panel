@@ -289,6 +289,7 @@ function getCourses():array {
         LEFT JOIN `course_technology` tc ON c.`id` = tc.`course_id`
         LEFT JOIN `technologies` t ON t.`id` = tc.`technology_id`
         GROUP BY c.`id`
+        ORDER BY c.`active` DESC;
         ");
 
     $courses = [];
@@ -427,7 +428,8 @@ function updateCourse(array $data) {
             `type` = '{$data['courses__type']}',
             `description_en` = '{$data['courses__description_en']}',
             `description_ru` = '{$data['courses__description_ru']}',
-            `sub_courses_ids` = '{$subCoursesIds}'
+            `sub_courses_ids` = '{$subCoursesIds}',
+            `active` = '{$data['courses__active']}'
             WHERE `id` = '{$course['id']}';
         " , false);
     } else {
