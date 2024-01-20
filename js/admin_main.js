@@ -490,6 +490,26 @@ function addNewSearchEditorItem(inputAdviserElement, inputAdviserData, itemsBox)
     description.value = inputAdviserData.description
     label.appendChild(description)
     label.innerHTML += `<span class="remover" onclick="this.parentElement.querySelector('input').disabled || this.parentElement.remove()">✖</span>`
+
+    if (inputAdviserElement.dataset.table === 'technologies') {
+        if (!childAttributes.id
+            && !inputAdviserData.id
+        ) {
+            const technologiesType = document.createElement('select')
+            technologiesType.name = `${input.name}_type`
+            technologiesType.style = 'margin-left: 20px;'
+            technologiesType.innerHTML = `<option value="frontend">Frontend</option>
+                                          <option value="backend">Backend</option>
+                                          <option value="devops">Devops</option>
+                                        <option value="other" selected>Other</option>`
+            label.appendChild(technologiesType)
+        } else {
+            const technologiesType = document.createElement('span')
+            technologiesType.classList.add('sub_info')
+            technologiesType.innerText = inputAdviserData.type
+            label.appendChild(technologiesType)
+        }
+    }
     itemsBox.appendChild(label)
 }
 

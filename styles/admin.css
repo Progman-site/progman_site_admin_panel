@@ -379,6 +379,15 @@ button.reset {
     text-align: right;
     padding-right: 5px;
 }
+.checkbox_list label > .sub_info {
+    font-size: 12px;
+    font-weight: normal;
+    color: darkslategray;
+    margin-left: 10px;
+    margin-top: 5px;
+    font-style: italic;
+}
+
 .checkbox_list .remover {
     font-weight: bolder;
     color: darkred;

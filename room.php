@@ -358,6 +358,8 @@
                             <?php foreach ($item['technologies_arr'] as $technologyData) { ?>
                                 <label title="<?= $technologyData['descriptions'] ?>">
                                     <?= $technologyData['name'] ?>
+                                    &nbsp;&nbsp;
+                                    <span class="sub_info"><?= ucfirst($technologyData['type']) ?></span>
                                     <input
                                             type="number"
                                             name="technologies__<?= $technologyData['id'] ?>"

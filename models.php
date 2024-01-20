@@ -283,6 +283,7 @@ function getCourses():array {
                GROUP_CONCAT(t.`name`) AS 'technologies',
                GROUP_CONCAT(t.`id`) AS 'technologies_ids',
                GROUP_CONCAT(t.`description` SEPARATOR '<~>') AS 'technologies_descriptions',
+               GROUP_CONCAT(t.`type`) AS 'technologies_types',
                GROUP_CONCAT(tc.`hours`) AS 'technologies_hours'
         FROM `courses` c
         LEFT JOIN `course_technology` tc ON c.`id` = tc.`course_id`
@@ -296,12 +297,14 @@ function getCourses():array {
         $technologiesIds = explode(',', $course['technologies_ids']);
         $technologiesNames = explode(',', $course['technologies']);
         $technologiesDescriptions = explode('<~>', $course['technologies_descriptions']);
+        $technologiesTypes = explode(',', $course['technologies_types']);
         $technologiesHours = explode(',', $course['technologies_hours']);
         foreach ($technologiesIds as $technologyKey => $technologyId) {
             $courses[$course['id']]['technologies_arr'][$technologyId] = [
                 'id' => $technologyId,
                 'name' => $technologiesNames[$technologyKey],
                 'descriptions' => $technologiesDescriptions[$technologyKey],
+                'type' => $technologiesTypes[$technologyKey],
                 'hours' => $technologiesHours[$technologyKey],
             ];
         }
@@ -395,7 +398,7 @@ function updateCourse(array $data) {
             $subCoursesIds[] = $itemProps[1];
         } elseif ($itemProps[0] == 'technologies') {
             if (str_starts_with($itemProps[1], 'new_')) {
-                $technologyId = sqlQuery("INSERT INTO `technologies` SET `name` = '{$data["{$dataKey}_name"]}', `description` = '{$data["{$dataKey}_description"]}';");
+                $technologyId = sqlQuery("INSERT INTO `technologies` SET `name` = '{$data["{$dataKey}_name"]}',`type` = '{$data["{$dataKey}_type"]}', `description` = '{$data["{$dataKey}_description"]}';");
                 if (!$technologyId) {
                     throw new Exception("Error while saving the technology(name:{$dataValue})!");
                 }
