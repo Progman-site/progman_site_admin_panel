@@ -22,10 +22,10 @@ jobs:
       - name: Create env file
         run: |
           touch .env
-          echo DB_HOST=${{ vars.TEST_FTP_STAGE_HOST }} >> .env
-          echo DB_NAME=${{ vars.TEST_FTP_STAGE_DB_NAME }} >> .env
-          echo DB_USER=${{ vars.TEST_FTP_STAGE_DB_USER }} >> .env
-          echo DB_PASSWORD=${{ secrets.TEST_FTP_STAGE_DB_PASSWORD }} >> .env
+          echo DB_HOST=${{ vars.DB_HOST }} >> .env
+          echo DB_NAME=${{ vars.DB_NAME }} >> .env
+          echo DB_USER=${{ vars.DB_USER }} >> .env
+          echo DB_PASSWORD=${{ secrets.DB_PASSWORD }} >> .env
           cat .env
 
       - name: Removing of extra files
