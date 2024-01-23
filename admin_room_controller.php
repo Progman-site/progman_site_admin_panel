@@ -17,7 +17,7 @@ if (@trim($_POST['login']) && @trim($_POST['password'])) {
 
 try {
     if (isset($_SESSION['authorization'])) {
-        @$_GET['navigation'] = $_GET['navigation'] ?: "certificates";
+        @$_GET['navigation'] = $_GET['navigation'] ?? null;
         $courses = getCourses();
         $certificates = getCertificates();
         $siteInfo = getSiteInfo();

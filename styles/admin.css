@@ -403,3 +403,8 @@ button.reset {
     border-color: darkred;
     color: black;
 }
+
+.welcome_block {
+    text-align: center;
+    padding: 20px;
+}
