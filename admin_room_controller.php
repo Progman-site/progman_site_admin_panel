@@ -21,6 +21,7 @@ try {
         $courses = getCourses();
         $certificates = getCertificates();
         $siteInfo = getSiteInfo();
+        $unusedTechnologies = getUnusedTechnologies();
     }
 } catch (Throwable $e) {
     printError([

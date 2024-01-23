@@ -379,7 +379,7 @@ button.reset {
     text-align: right;
     padding-right: 5px;
 }
-.checkbox_list label > .sub_info {
+.sub_info {
     font-size: 12px;
     font-weight: normal;
     color: darkslategray;
@@ -407,4 +407,38 @@ button.reset {
 .welcome_block {
     text-align: center;
     padding: 20px;
+}
+.unused_technologies summary {
+    font-weight: bold;
+    cursor: pointer;
+    text-transform: uppercase;
+}
+
+.unused_technologies {
+    background: lightsalmon !important;
+}
+.unused_technologies ul {
+    padding: 20px;
+    background: #f7d7d7;
+}
+.unused_technologies ul li {
+    padding: 10px;
+    margin: 10px !important;
+}
+
+.unused_technologies ul > li div:first-child {
+    display: flex;
+    border-radius: 5px;
+}
+.unused_technologies ul > li span {
+    flex: .7;
+}
+.unused_technologies ul > li input[type="button"] {
+    flex: .1;
+}
+.unused_technologies input[type="button"] {
+    padding: 2px 5px;
+    border-radius: 5px;
+    background: #fcb857;
+    cursor: pointer;
 }

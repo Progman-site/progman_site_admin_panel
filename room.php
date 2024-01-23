@@ -26,6 +26,9 @@
     <form class="reset" method="post">
         <input type="hidden" name="reset" value="1">
         How are you doing, <b><?= $_SESSION['authorization']['login']?></b>!
+        &nbsp;&nbsp;
+        <a href="/room.php">main page</a>
+        &nbsp;&nbsp;
         <button type="submit">logout</button>
     </form>
     <form class="navigation">

@@ -45,6 +45,9 @@ try {
         case 'delCourse':
             printResult(delCourse($_POST['id']));
             break;
+        case 'removeTechnology':
+            printResult(removeTechnology((int) $_POST['id']));
+            break;
     }
 } catch (Throwable $e) {
     printError([

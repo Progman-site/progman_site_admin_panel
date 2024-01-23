@@ -61,6 +61,24 @@
             <button class="changer" data-task="save" data-api_method="updateCourse" data-id="">CREATE</button>
         </div>
     </div>
+    <?php if(!empty($unusedTechnologies)) : ?>
+        <details class="unused_technologies">
+            <summary><strong>Unused technologies</strong> (<span><?= count($unusedTechnologies) ?></span>pc)</summary>
+            <ul data-form_name="user_data">
+                <?php foreach ($unusedTechnologies as $item): ?>
+                    <li title="<?= $item['description'] ?>">
+                        <div>
+                            <span><strong><?= $item['name'] ?></strong> (<?= ucfirst($item['type']) ?>)</span>
+                            <input type="button" class="technology_remover" value="✖ del" data-id="<?= $item['id'] ?>" title="delete the technology">
+                        </div>
+                        <div class="sub_info"><?= $item['description'] ? ucfirst($item['description']) : "no description" ?></div>
+                    </li>
+                <?php endforeach; ?>
+            </ul>
+        </details>
+    <?php else: ?>
+        <h6>There are no unused technologies found currently.</h6>
+    <?php endif; ?>
 
     <?php $count = 0; foreach ($courses as $item) { ?>
         <details>

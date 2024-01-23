@@ -500,6 +500,27 @@ function delCourse(int $id): string {
     return "Error while deleting the course(id:{$course['id']})!";
 }
 
+function getUnusedTechnologies(int $id = null): array {
+    $byId = $id ? "AND t.`id` = {$id}" : "";
+    $unusedTechnologies = sqlQuery("
+        SELECT t.* FROM `technologies` t
+        LEFT JOIN `course_technology` ct ON ct.`technology_id` = t.`id`
+        LEFT JOIN `certificate_technology` cet ON cet.`technology_id` = t.`id`
+        WHERE ct.`technology_id` IS NULL AND cet.`technology_id` IS NULL {$byId};
+    ");
+    return $unusedTechnologies;
+}
+
+function removeTechnology(int $id): string {
+    if (empty(getUnusedTechnologies($id))) {
+        throw new Exception("The technology(id:{$id}) can not be deleted because it is used or doesn't exist!");
+    }
+    if (sqlQuery("DELETE FROM `technologies` WHERE `id` = {$id};")) {
+        return "The technology(id:{$id}) is successfully deleted from the database!";
+    }
+    return "Error while deleting the technology(id:{$id})!";
+}
+
 function downloadCertificate(int $id): string {
     $certificateData = getCertificates($id);
     $blank = new ImageBlank(__DIR__ . "/images/pg_cert_blank_{$certificateData['blank']}.jpg");

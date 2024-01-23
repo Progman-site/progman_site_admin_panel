@@ -513,3 +513,33 @@ function addNewSearchEditorItem(inputAdviserElement, inputAdviserData, itemsBox)
     itemsBox.appendChild(label)
 }
 
+document.querySelectorAll('.technology_remover').forEach(item => {
+    item.addEventListener('click', event => {
+        const list = event.target.parentElement.parentElement.parentElement
+        if (!confirm(`Do you really want to remove '${event.target.parentElement.querySelector("strong").innerHTML}' technology?`)){
+            return false
+        }
+        const formData = new FormData()
+        formData.append('form_name', 'removeTechnology')
+        formData.append('id', event.target.dataset.id)
+        fetch('admin_api_controller.php', {
+            method: "POST",
+            body: formData
+        }).then(
+            response => response.json().then(
+                result => {
+                    if (result.status === "ok!") {
+                        alert(result.data);
+                        event.target.parentElement.parentElement.remove()
+                        if (list.childElementCount === 0) {
+                            location.reload();
+                        }
+                        list.parentElement.querySelector('summary > span').innerText = list.childElementCount
+                    } else {
+                        alert('An unexpected error!');
+                    }
+                }
+            ))
+    })
+})
+
