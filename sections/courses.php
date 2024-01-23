@@ -87,6 +87,8 @@
                 <div>
                     <label>Created: <b><?= date("m/d/Y", strtotime($item["created_at"])) ?></b></label>
                     &nbsp;&nbsp;
+                    <span>by <strong><?= $item["admin_login"] ?></strong></span>
+                    &nbsp;&nbsp;
                     <label>Last update: <b><?= $item["updated_at"] ? date("m/d/Y H:i", strtotime($item["updated_at"])) : " - " ?></b></label>
                     <textarea name="courses__description_en" cols="30" rows="10" placeholder="Description of the course (en)" disabled><?= $item["description_en"] ?></textarea>
                     <br>

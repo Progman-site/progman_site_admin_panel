@@ -36,6 +36,8 @@
             <?php } ?>
         </details>
     <?php } ?>
+    <br />
+    <br />
     <div class="submit_place">
         <button type="submit">SAVE CHANGES</button>
         <button type="button" class="reset">RESET</button>

@@ -284,10 +284,12 @@ function getCourses():array {
                GROUP_CONCAT(t.`id`) AS 'technologies_ids',
                GROUP_CONCAT(t.`description` SEPARATOR '<~>') AS 'technologies_descriptions',
                GROUP_CONCAT(t.`type`) AS 'technologies_types',
-               GROUP_CONCAT(tc.`hours`) AS 'technologies_hours'
+               GROUP_CONCAT(tc.`hours`) AS 'technologies_hours',
+                a.`login` AS 'admin_login'
         FROM `courses` c
         LEFT JOIN `course_technology` tc ON c.`id` = tc.`course_id`
         LEFT JOIN `technologies` t ON t.`id` = tc.`technology_id`
+        LEFT JOIN `admins` a ON a.`id` = c.`admin_id`
         GROUP BY c.`id`
         ORDER BY c.`active` DESC;
         ");
@@ -304,7 +306,7 @@ function getCourses():array {
             $courses[$course['id']]['technologies_arr'][$technologyId] = [
                 'id' => $technologyId,
                 'name' => $technologiesNames[$technologyKey],
-                'descriptions' => $technologiesDescriptions[$technologyKey],
+                'descriptions' => $technologiesDescriptions[$technologyKey] ?? null,
                 'type' => $technologiesTypes[$technologyKey],
                 'hours' => $technologiesHours[$technologyKey],
             ];
@@ -440,7 +442,8 @@ function updateCourse(array $data) {
             `type` = '{$data['courses__type']}',
             `description_en` = '{$data['courses__description_en']}',
             `description_ru` = '{$data['courses__description_ru']}',
-            `sub_courses_ids` = '{$subCoursesIds}';
+            `sub_courses_ids` = '{$subCoursesIds}'
+            `admin_id` = '{$_SESSION['authorization']['id']}';
           ", false);
     }
 
