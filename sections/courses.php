@@ -82,9 +82,11 @@
 
     <?php $count = 0; foreach ($courses as $item) { ?>
         <details>
-            <summary style="<?= !$item["active"] ? "color: gray; font-style: italic" : "" ?>"><strong><?= $item["name"] ?></strong> course (<?= $item["id"] ?>)</summary>
+            <summary style="<?= !$item["active"] ? "color: gray; font-style: italic" : "" ?>"><strong><?= $item["name"] ?></strong> course (<?= $item["order"] ?>)</summary>
             <div data-form_name="user_data">
                 <div>
+                    <span>ID: <strong><?= $item["id"] ?></strong></span>
+                    &nbsp;&nbsp;
                     <label>Created: <b><?= date("m/d/Y", strtotime($item["created_at"])) ?></b></label>
                     &nbsp;&nbsp;
                     <span>by <strong><?= $item["admin_login"] ?></strong></span>
@@ -94,7 +96,7 @@
                     <br>
                     <textarea name="courses__description_ru" cols="30" rows="10" placeholder="Description of the course (ru)" disabled><?= $item["description_ru"] ?></textarea>
                     <br><br>
-                    <div>
+                    <div style="display: inline-block">
                         <label>Level:
                             <select name="courses__level" disabled>
                                 <?php foreach (COURSE_LEVELS as $level) { ?>
@@ -110,10 +112,17 @@
                                 <?php } ?>
                             </select>
                         </label>
+                    </div>
+                    <div style="display: inline-block">
                         &nbsp;&nbsp;
                         <label>
                             <span style="<?= $item["active"] ? "font-weight: bolder; color: green;" : "" ?>">Active:</span>
                             <input type="checkbox" style="zoom: 1.5;" name="courses__active" value="<?= $item["active"] ?>" <?= $item["active"] ? "checked" : "" ?> onchange="this.value = this.checked" disabled>
+                        </label>
+                        &nbsp;&nbsp;
+                        <label>
+                            <span>Order:</span>
+                            <input type="number" name="courses__order" value="<?= $item["order"] ?>" disabled>
                         </label>
                     </div>
                     <br><br>
