@@ -100,7 +100,7 @@
                         <label>Level:
                             <select name="courses__level" disabled>
                                 <?php foreach (COURSE_LEVELS as $level) { ?>
-                                    <option value="<?= $level ?>" <?= $type == $item["level"] ? "selected" : "" ?> ><?= ucfirst($level) ?></option>
+                                    <option value="<?= $level ?>" <?= $level == $item["level"] ? "selected" : "" ?> ><?= ucfirst($level) ?></option>
                                 <?php } ?>
                             </select>
                         </label>
