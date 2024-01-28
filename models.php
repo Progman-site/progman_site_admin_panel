@@ -443,7 +443,7 @@ function updateCourse(array $data) {
             `type` = '{$data['courses__type']}',
             `description_en` = '{$data['courses__description_en']}',
             `description_ru` = '{$data['courses__description_ru']}',
-            `sub_courses_ids` = '{$subCoursesIds}'
+            `sub_courses_ids` = '{$subCoursesIds}',
             `admin_id` = '{$_SESSION['authorization']['id']}';
           ", false);
     }
