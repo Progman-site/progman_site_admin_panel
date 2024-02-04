@@ -297,6 +297,13 @@ function getCourses():array {
     $courses = [];
     foreach ($coursesArr as $course) {
         $courses[$course['id']] = $course;
+        $courses[$course['id']]["sub_courses"] = $course['sub_courses_ids'] ?
+            sqlQuery("SELECT * FROM `courses` WHERE `id` IN ({$course['sub_courses_ids']});") : null;
+        $courses[$course['id']]['technologies_arr'] = [];
+
+        if (!$course['technologies_ids']) {
+            continue;
+        }
         $technologiesIds = explode(',', $course['technologies_ids']);
         $technologiesNames = explode(',', $course['technologies']);
         $technologiesDescriptions = explode('<~>', $course['technologies_descriptions']);
@@ -311,8 +318,6 @@ function getCourses():array {
                 'hours' => $technologiesHours[$technologyKey],
             ];
         }
-        $courses[$course['id']]["sub_courses"] = $course['sub_courses_ids'] ?
-            sqlQuery("SELECT * FROM `courses` WHERE `id` IN ({$course['sub_courses_ids']});") : null;
     }
     return $courses;
 }
