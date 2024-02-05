@@ -38,7 +38,7 @@ jobs:
         with:
           server: ${{ vars.PROD_FTP_HOST }}
           username: ${{ vars.ADM_STAGE_FTP_USER }}
-          password: ${{ secrets.TEST_2_FTP_STAGE_FTP_PASSWORD }}
+          password: ${{ secrets.ADM_STAGE_FTP_PASSWORD }}
 
       - name: Sanding the result notification through Telegram
         run: |
