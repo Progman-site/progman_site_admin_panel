@@ -4,11 +4,11 @@
     <div id="new_price_item">
         <strong>Generate a NEW one</strong>
         <div>
-            <input type="text" class="input_adviser" data-table="courses" data-field="name" name="courses__name" value="" placeholder="Name of the course">
+            <input type="text" class="input_adviser" data-table="courses" data-field="name" name="courses__name" value="" maxlength="64" placeholder="Name of the course">
             <br>
-            <textarea name="courses__description_en" cols="30" rows="10" placeholder="Description of the course (en)"></textarea>
+            <textarea name="courses__description_en" cols="30" rows="10" maxlength="500" placeholder="Description of the course (en)"></textarea>
             <br>
-            <textarea name="courses__description_ru" cols="30" rows="10" placeholder="Description of the course (ru)"></textarea>
+            <textarea name="courses__description_ru" cols="30" rows="10" maxlength="500" placeholder="Description of the course (ru)"></textarea>
             <br><br>
             <div>
                 <label>Level:
@@ -92,9 +92,9 @@
                     <span>by <strong><?= $item["admin_login"] ?></strong></span>
                     &nbsp;&nbsp;
                     <label>Last update: <b><?= $item["updated_at"] ? date("m/d/Y H:i", strtotime($item["updated_at"])) : " - " ?></b></label>
-                    <textarea name="courses__description_en" cols="30" rows="10" placeholder="Description of the course (en)" disabled><?= $item["description_en"] ?></textarea>
+                    <textarea name="courses__description_en" cols="30" rows="10" maxlength="500" placeholder="Description of the course (en)" disabled><?= $item["description_en"] ?></textarea>
                     <br>
-                    <textarea name="courses__description_ru" cols="30" rows="10" placeholder="Description of the course (ru)" disabled><?= $item["description_ru"] ?></textarea>
+                    <textarea name="courses__description_ru" cols="30" rows="10" maxlength="500" placeholder="Description of the course (ru)" disabled><?= $item["description_ru"] ?></textarea>
                     <br><br>
                     <div style="display: inline-block">
                         <label>Level:
