@@ -415,7 +415,12 @@ function updateCourse($connect, array $data) {
             $subCoursesIds[] = $itemProps[1];
         } elseif ($itemProps[0] == 'technologies') {
             if (str_starts_with($itemProps[1], 'new_')) {
-                $technologyId = sqlQuery("INSERT INTO `technologies` SET `name` = \"{$data["{$dataKey}_name"]}\",`type` = '{$data["{$dataKey}_type"]}', `description` = \"{$data["{$dataKey}_description"]}\";");
+                $technologyId = sqlQuery(sprintf("
+                    INSERT INTO `technologies` SET `name` = '%s',`type` = '%s', `description` = '%s';",
+                    mysqli_real_escape_string($connect, $data["{$dataKey}_name"]),
+                    mysqli_real_escape_string($connect, $data["{$dataKey}_type"]),
+                    mysqli_real_escape_string($connect, $data["{$dataKey}_description"])
+                ));
                 if (!$technologyId) {
                     throw new Exception("Error while saving the technology(name:{$dataValue})!");
                 }
@@ -435,28 +440,28 @@ function updateCourse($connect, array $data) {
     if (isset($data['id'])) {
         $course = sqlQuery("SELECT * FROM `courses` WHERE `id` = '{$data['id']}'", false);
         $course_id = $course['id'];
-        sqlQuery("
-        UPDATE `courses` SET 
-            `level` = '{$data['courses__level']}',
-            `type` = '{$data['courses__type']}',
-            `description_en` = \"{$data['courses__description_en']}\",
-            `description_ru` = \"{$data['courses__description_ru']}\",
-            `sub_courses_ids` = '{$subCoursesIds}',
-            `active` = '{$data['courses__active']}',
-            `order` = '{$data['courses__order']}'
-            WHERE `id` = '{$course['id']}';
-        " , false);
+        sqlQuery(sprintf("
+        UPDATE `courses` SET `level` = '%s', `type` = '%s', `description_en` = '%s', `description_ru` = '%s', `sub_courses_ids` = '%s', `active` = '%s', `order` = '%s' WHERE `id` = '%s';",
+            mysqli_real_escape_string($connect, $data['courses__level']),
+            mysqli_real_escape_string($connect, $data['courses__type']),
+            mysqli_real_escape_string($connect, $data['courses__description_en']),
+            mysqli_real_escape_string($connect, $data['courses__description_ru']),
+            mysqli_real_escape_string($connect, $subCoursesIds),
+            mysqli_real_escape_string($connect, $data['courses__active']),
+            mysqli_real_escape_string($connect, $data['courses__order']),
+            mysqli_real_escape_string($connect, $course['id'])
+        ), false);
     } else {
-        $course_id = sqlQuery("
-        INSERT INTO `courses` SET 
-            `name` = \"{$data['courses__name']}\",
-            `level` = '{$data['courses__level']}',
-            `type` = '{$data['courses__type']}',
-            `description_en` = \"{$data['courses__description_en']}\",
-            `description_ru` = \"{$data['courses__description_ru']}\",
-            `sub_courses_ids` = '{$subCoursesIds}',
-            `admin_id` = '{$_SESSION['authorization']['id']}';
-          ", false);
+        $course_id = sqlQuery(sprintf("
+        INSERT INTO `courses` SET `name` = '%s', `level` = '%s', `type` = '%s', `description_en` = '%s', `description_ru` = '%s', `sub_courses_ids` = '%s', `admin_id` = '%s';",
+            mysqli_real_escape_string($connect, $data['courses__name']),
+            mysqli_real_escape_string($connect, $data['courses__level']),
+            mysqli_real_escape_string($connect, $data['courses__type']),
+            mysqli_real_escape_string($connect, $data['courses__description_en']),
+            mysqli_real_escape_string($connect, $data['courses__description_ru']),
+            mysqli_real_escape_string($connect, $subCoursesIds),
+            mysqli_real_escape_string($connect, $_SESSION['authorization']['id'])
+        ), false);
     }
 
     $courseTechnologies = sqlQuery("SELECT * FROM `course_technology` WHERE `course_id` = '{$course_id}'");
