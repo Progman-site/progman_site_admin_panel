@@ -75,8 +75,9 @@ function checkUser(string $login, string $password, string $level = 'admin'): ?a
     return null;
 }
 
-function updateSiteInfo(): string
+function updateSiteInfo($connect): string
 {
+    mysqli_begin_transaction($connect);
     foreach ($_FILES as $fileInputName => $fileData) {
         $imgPath = "./images/{$_FILES[$fileInputName]['name']}";
         if (move_uploaded_file($_FILES[$fileInputName]['tmp_name'], $imgPath)) {
@@ -115,6 +116,7 @@ function updateSiteInfo(): string
         }
 
     }
+    mysqli_commit($connect);
     return "Tags (" . count($updatedTags)."pс) have been successfully updated!\n\n" . implode("\n", $updatedTags);
 }
 
@@ -199,13 +201,13 @@ function printError(mixed $data): void {
 /**
  * @throws Exception
  */
-function updateCertificate(): void {
-    global $connect;
-    mysqli_begin_transaction($connect);
+function updateCertificate($connect): string
+{
     $user = sqlQuery("SELECT * FROM `users` WHERE `id` = '{$_POST['users__id']}'", false);
     if (!$user) {
         throw new Exception("The user(id:{$_POST['users__id']}) is not found!");
     }
+    mysqli_begin_transaction($connect);
     sqlQuery("UPDATE `users` SET 
                    `real_last_name` = '{$_POST['users__real_last_name']}', 
                    `real_first_name` = '{$_POST['users__real_first_name']}', 
@@ -262,19 +264,22 @@ function updateCertificate(): void {
         }
     }
     mysqli_commit($connect);
-    printResult("The certificate(id:{$certificate['id']}) is successfully updated/created!");
+    return "The certificate(id:{$certificate['id']}) is successfully updated/created!";
 }
 
-function delCertificate(?int $id = null): void {
+function delCertificate($connect, ?int $id = null): string {
     $certificate = sqlQuery("SELECT * FROM `certificates` WHERE `id` = {$id}", false);
+    mysqli_begin_transaction($connect);
     if (
         $id
         && !empty($certificate)
         && sqlQuery("DELETE FROM `certificate_technology` WHERE `certificate_id` = {$id};")
         && sqlQuery("DELETE FROM `certificates` WHERE `id` = $id;")
     ) {
-        printResult("The certificate(id:{$certificate['id']}) is successfully deleted from the database!");
+        mysqli_commit($connect);
+        return "The certificate(id:{$certificate['id']}) is successfully deleted from the database!";
     }
+    return "Error while deleting the certificate(id:{$certificate['id']})!";
 }
 
 function getCourses():array {
@@ -385,10 +390,11 @@ function getCourseTechnologies(int $courseId): array {
     ");
 }
 
-function updateCourse(array $data) {
+function updateCourse($connect, array $data) {
     $subCoursesIds = [];
     $technologiesIds = [];
     $newTechnologiesIds = [];
+    mysqli_begin_transaction($connect);
 
     foreach ($data as $dataKey => $dataValue) {
         if ($dataKey == "id") {
@@ -409,7 +415,7 @@ function updateCourse(array $data) {
             $subCoursesIds[] = $itemProps[1];
         } elseif ($itemProps[0] == 'technologies') {
             if (str_starts_with($itemProps[1], 'new_')) {
-                $technologyId = sqlQuery("INSERT INTO `technologies` SET `name` = '{$data["{$dataKey}_name"]}',`type` = '{$data["{$dataKey}_type"]}', `description` = '{$data["{$dataKey}_description"]}';");
+                $technologyId = sqlQuery("INSERT INTO `technologies` SET `name` = \"{$data["{$dataKey}_name"]}\",`type` = '{$data["{$dataKey}_type"]}', `description` = \"{$data["{$dataKey}_description"]}\";");
                 if (!$technologyId) {
                     throw new Exception("Error while saving the technology(name:{$dataValue})!");
                 }
@@ -433,8 +439,8 @@ function updateCourse(array $data) {
         UPDATE `courses` SET 
             `level` = '{$data['courses__level']}',
             `type` = '{$data['courses__type']}',
-            `description_en` = '{$data['courses__description_en']}',
-            `description_ru` = '{$data['courses__description_ru']}',
+            `description_en` = \"{$data['courses__description_en']}\",
+            `description_ru` = \"{$data['courses__description_ru']}\",
             `sub_courses_ids` = '{$subCoursesIds}',
             `active` = '{$data['courses__active']}',
             `order` = '{$data['courses__order']}'
@@ -443,11 +449,11 @@ function updateCourse(array $data) {
     } else {
         $course_id = sqlQuery("
         INSERT INTO `courses` SET 
-            `name` = '{$data['courses__name']}',
+            `name` = \"{$data['courses__name']}\",
             `level` = '{$data['courses__level']}',
             `type` = '{$data['courses__type']}',
-            `description_en` = '{$data['courses__description_en']}',
-            `description_ru` = '{$data['courses__description_ru']}',
+            `description_en` = \"{$data['courses__description_en']}\",
+            `description_ru` = \"{$data['courses__description_ru']}\",
             `sub_courses_ids` = '{$subCoursesIds}',
             `admin_id` = '{$_SESSION['authorization']['id']}';
           ", false);
@@ -469,10 +475,11 @@ function updateCourse(array $data) {
     foreach ($newTechnologiesIds as $newTechnologyId => $technologyHours) {
         sqlQuery("INSERT INTO `course_technology` SET `course_id` = '{$course_id}', `technology_id` = '{$newTechnologyId}', `hours` = {$technologyHours};");
     }
+    mysqli_commit($connect);
     return "The course(id:{$course_id}) is successfully updated/created!";
 }
 
-function delCourse(int $id): string {
+function delCourse($connect, int $id): string {
     $course = sqlQuery("SELECT * FROM `courses` WHERE `id` = {$id}", false);
     if (!$course) {
         throw new Exception("The course(id:{$id}) is not found!");
@@ -499,11 +506,13 @@ function delCourse(int $id): string {
     if (!empty($deleteExceptions)) {
         throw new Exception("The course(id:{$course['id']}) can not be deleted because it is used:\n" . implode("\n", $deleteExceptions));
     }
+    mysqli_begin_transaction($connect);
 
     if (
         sqlQuery("DELETE FROM `course_technology` WHERE `course_id` = {$id};")
         && sqlQuery("DELETE FROM `courses` WHERE `id` = $id;")
     ) {
+        mysqli_commit($connect);
         return "The course(id:{$course['id']}) is successfully deleted from the database!";
     }
     return "Error while deleting the course(id:{$course['id']})!";
@@ -520,11 +529,13 @@ function getUnusedTechnologies(int $id = null): array {
     return $unusedTechnologies;
 }
 
-function removeTechnology(int $id): string {
+function removeTechnology($connect, int $id): string {
     if (empty(getUnusedTechnologies($id))) {
         throw new Exception("The technology(id:{$id}) can not be deleted because it is used or doesn't exist!");
     }
+    mysqli_begin_transaction($connect);
     if (sqlQuery("DELETE FROM `technologies` WHERE `id` = {$id};")) {
+        mysqli_commit($connect);
         return "The technology(id:{$id}) is successfully deleted from the database!";
     }
     return "Error while deleting the technology(id:{$id})!";

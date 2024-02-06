@@ -19,19 +19,19 @@ try {
     switch($formName) {
         case 'updateCertificates':
             unset($_POST['form_name']);
-            updateCertificate();
+            printResult(updateCertificate($connect));
             break;
         case 'userSearch':
             printResult(getUserByFieldName($_POST['field'], $_POST['value']));
             break;
         case 'delCertificate':
-            delCertificate((int)$_POST['id']);
+            printResult(delCertificate($connect, (int)$_POST['id']));
             break;
         case 'downloadCertificate':
             printResult(downloadCertificate($_POST['id']));
             break;
         case 'updateSiteInfo':
-            printResult(updateSiteInfo());
+            printResult(updateSiteInfo($connect));
             break;
         case 'adviserSearch':
             printResult(getAdviseList($_POST['table'], $_POST['field'], $_POST['value']));
@@ -40,13 +40,13 @@ try {
             printResult(getCourseTechnologies($_POST['course_id']));
             break;
         case 'updateCourse':
-            printResult(updateCourse($_POST));
+            printResult(updateCourse($connect, $_POST));
             break;
         case 'delCourse':
-            printResult(delCourse($_POST['id']));
+            printResult(delCourse($connect, $_POST['id']));
             break;
         case 'removeTechnology':
-            printResult(removeTechnology((int) $_POST['id']));
+            printResult(removeTechnology($connect, (int) $_POST['id']));
             break;
     }
 } catch (Throwable $e) {
