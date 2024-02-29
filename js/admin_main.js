@@ -543,3 +543,71 @@ document.querySelectorAll('.technology_remover').forEach(item => {
     })
 })
 
+document.querySelectorAll(
+    'select[name="coupons__method"], select[name="coupons__coupon_type_id"]'
+).forEach(item => {
+    item.addEventListener('change', event => {
+        const serialNumberInput = event.target.parentElement.parentElement.parentElement.querySelector(
+            'input[name="coupons__serial_number"]'
+        )
+        const couponDescriptionTextarea = event.target.parentElement.parentElement.parentElement.querySelector(
+            'textarea[name="coupons__description"]'
+        )
+        let couponMethodSelector, couponTypeSelector
+        if (event.target.name === 'coupons__coupon_type_id') {
+            couponTypeSelector = event.target
+            const selectedOption = event.target.querySelector('option:checked')
+            couponTypeSelector.dataset.prefix = selectedOption.dataset.prefix
+            couponTypeSelector.dataset.title = selectedOption.dataset.title
+            couponMethodSelector = event.target.parentElement.parentElement.parentElement.querySelector(
+                'select[name="coupons__method"]'
+            )
+        } else {
+            couponTypeSelector = event.target.parentElement.parentElement.parentElement.querySelector(
+                'select[name="coupons__coupon_type_id"]'
+            )
+            couponMethodSelector = event.target
+        }
+
+        if (couponMethodSelector.value === 'generated') {
+            let prefixPart = couponTypeSelector.dataset.prefix ? `${couponTypeSelector.dataset.prefix}-` : ''
+            serialNumberInput.value = ""
+            serialNumberInput.placeholder = `${prefixPart}XXXXXX (auto-generated)`
+            serialNumberInput.disabled = true
+        } else {
+            serialNumberInput.placeholder = "Write a full serial!"
+            serialNumberInput.value = ""
+            serialNumberInput.disabled = false
+        }
+
+        const typePrefixInput = event.target.parentElement.parentElement.querySelector(".coupon_types__prefix")
+        if (!couponTypeSelector.value) {
+            couponDescriptionTextarea.rquired = true
+            couponDescriptionTextarea.placeholder = "Write a description for the coupon (required!)"
+            typePrefixInput.value = couponTypeSelector.dataset.prefix
+        } else {
+            couponDescriptionTextarea.rquired = false
+            couponDescriptionTextarea.placeholder = "Coupon description (optional)"
+            typePrefixInput.value = ""
+        }
+    })
+})
+
+document.querySelectorAll('select[name="coupons__coupon_unit_id"]').forEach(item => {
+    item.addEventListener('change', event => {
+        const couponUnitSelector = event.target
+        const selectedOption = event.target.querySelector('option:checked')
+        couponUnitSelector.dataset.symbol = selectedOption.dataset.symbol
+        couponUnitSelector.dataset.symbol_placement = selectedOption.dataset.symbol_placement
+        couponUnitSelector.dataset.formula = selectedOption.dataset.formula
+
+        couponUnitSelector.parentElement.querySelectorAll('.coupon_unit_prefix').forEach(
+            item => item.innerText = ''
+        )
+        couponUnitSelector.parentElement.querySelector(
+            `.coupon_unit_prefix_${couponUnitSelector.dataset.symbol_placement}`
+        ).innerText = couponUnitSelector.dataset.symbol
+        couponUnitSelector.parentElement.parentElement.querySelector('.coupon_unit_formula').innerHTML
+            = couponUnitSelector.dataset.formula
+    })
+})

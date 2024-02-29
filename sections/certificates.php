@@ -1,4 +1,7 @@
-<?php if(!isset($_SESSION['authorization'])) exit(); ?>
+<?php
+if(!isset($_SESSION['authorization'])) {exit();}
+$certificates = getCertificates();
+?>
 <div class="edit_panel certificates price_list">
     <h3>Certificates management</h3>
     <div id="new_price_item">

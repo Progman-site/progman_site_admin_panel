@@ -620,3 +620,88 @@ function downloadCertificate(int $id): string {
         );
     return $blank->getBase64(65);
 }
+
+function getCoupons(): array {
+    return sqlQuery("
+        SELECT c.*, ct.`name` AS 'type', cu.`name` AS 'unit', cp.`name` AS 'placement' FROM `coupons` c
+        LEFT JOIN `coupon_types` ct ON c.`coupon_type_id` = ct.`id`
+        LEFT JOIN `coupon_units` cu ON c.`coupon_unit_id` = cu.`id`
+        LEFT JOIN `coupon_placements` cp ON c.`placement_id` = cp.`id`
+        ORDER BY c.`id` DESC;
+    ");
+}
+
+function getCouponUnits(): array {
+    return sqlQuery("SELECT * FROM `coupon_units`");
+}
+
+function getCouponTypes(): array {
+    return sqlQuery("SELECT * FROM `coupon_types`");
+}
+
+function getCouponPlacements(): array {
+    return sqlQuery("SELECT * FROM `coupon_placements`");
+}
+
+/**
+ * @throws Exception
+ */
+function updateCoupon($connect, array $data): string {
+
+    if (@$data['coupons__id']) {
+        sqlQuery("SELECT * FROM `coupons` WHERE `id` = '{$data['id']}'", false);
+        sqlQuery(sprintf("UPDATE `coupons` 
+                SET `name` = '%s', `language` = '%s', `description` = '%s', `area` = '%s', `area_type` = '%s', `placement_id` = '%s', `active` = '%s' 
+                WHERE `id` = '%s'",
+            mysqli_real_escape_string($connect, $data['coupons__name']),
+            mysqli_real_escape_string($connect, $data['coupons__language']),
+            mysqli_real_escape_string($connect, $data['coupons__description']),
+            mysqli_real_escape_string($connect, $data['coupons__area']),
+            mysqli_real_escape_string($connect, $data['coupons__area_type']),
+            mysqli_real_escape_string($connect, $data['coupons__placement_id']),
+            mysqli_real_escape_string($connect, $data['coupons__active']),
+            mysqli_real_escape_string($connect, $data['coupons__id'])
+        ));
+        $couponId = $data['coupons__id'];
+    } else {
+        $couponId = sqlQuery(sprintf("INSERT INTO `coupons` SET 
+                `name` = '%s', `method` = '%s', `language` = '%s', `coupon_type_id` = '%s', `coupon_unit_id` = '%s', `value` = '%s', `max_times` = '%s', `expired_at` = '%s', `description` = '%s', `is_active` = '%s', `area` = '%s', `area_type` = '%s', `placement_id` = '%s'",
+            mysqli_real_escape_string($connect, $data['coupons__name']),
+            mysqli_real_escape_string($connect, $data['coupons__method']),
+            mysqli_real_escape_string($connect, $data['coupons__language']),
+            mysqli_real_escape_string($connect, $data['coupons__coupon_type_id']),
+            mysqli_real_escape_string($connect, $data['coupons__coupon_unit_id']),
+            mysqli_real_escape_string($connect, $data['coupons__value']),
+            mysqli_real_escape_string($connect, $data['coupons__max_times']),
+            mysqli_real_escape_string($connect, $data['coupons__expired_at']),
+            mysqli_real_escape_string($connect, $data['coupons__description']),
+            mysqli_real_escape_string($connect, $data['coupons__is_active']),
+            mysqli_real_escape_string($connect, $data['coupons__area']),
+            mysqli_real_escape_string($connect, $data['coupons__area_type']),
+            mysqli_real_escape_string($connect, $data['coupons__placement_id'])
+        ));
+        $serialNumber = generateCouponSerialNumber($couponId, $data['coupon_types__prefix']);
+        sqlQuery("UPDATE `coupons` SET `serial_number` = '{$serialNumber}' WHERE `id` = '{$couponId}';");
+    }
+    return "The coupon(id:{$couponId}) is successfully updated/created!";
+}
+
+function generateCouponSerialNumber(int $couponId, ?string $prefix = null): string {
+    $charFirst = chr(rand(ord('a'), ord('z')));
+    $charLast = chr(rand(ord('a'), ord('z')));
+    $serialNumber = ($prefix ? ($prefix . "-") : $charFirst) . $couponId .
+        strtoupper($charLast . substr(md5($couponId), 0, $prefix ? rand(3, 4) : rand(6, 8)));
+    if (isCouponSerialNumberExists($serialNumber)) {
+        throw new Exception(
+            "Error while generating the serial number, the serial number '{$serialNumber}' is already exists!"
+        );
+    }
+    return $serialNumber;
+}
+
+function isCouponSerialNumberExists(string $serialNumber): bool {
+    return !empty(sqlQuery(
+            "SELECT * FROM `coupons` WHERE `serial_number` = '{$serialNumber}'",
+            false
+        ));
+}

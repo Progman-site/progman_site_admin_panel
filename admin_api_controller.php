@@ -2,7 +2,7 @@
 session_start();
 
 require_once "init.php";
-require_once "models.php";
+require_once "functions.php";
 require_once 'ImageSigner/image_signer.inc.php';
 
 
@@ -47,6 +47,12 @@ try {
             break;
         case 'removeTechnology':
             printResult(removeTechnology($connect, (int) $_POST['id']));
+            break;
+        case 'updateCoupon':
+            printResult(updateCoupon($connect, $_POST));
+            break;
+        case 'checkCouponSerialNumber':
+            printResult(isCouponSerialNumberExists($_POST['serial_number']));
             break;
     }
 } catch (Throwable $e) {

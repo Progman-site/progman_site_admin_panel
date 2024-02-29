@@ -1,4 +1,8 @@
-<?php if(!isset($_SESSION['authorization'])) exit(); ?>
+<?php
+if(!isset($_SESSION['authorization'])) {exit();}
+$courses = getCourses();
+$unusedTechnologies = getUnusedTechnologies();
+?>
 <div class="edit_panel courses price_list">
     <h3>Courses management</h3>
     <div id="new_price_item">

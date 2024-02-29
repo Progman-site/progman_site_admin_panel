@@ -2,7 +2,7 @@
 session_start();
 
 require_once "init.php";
-require_once "models.php";
+require_once "functions.php";
 
 $connect = sqlConnect();
 
@@ -18,10 +18,6 @@ if (@trim($_POST['login']) && @trim($_POST['password'])) {
 try {
     if (isset($_SESSION['authorization'])) {
         @$_GET['navigation'] = $_GET['navigation'] ?? null;
-        $courses = getCourses();
-        $certificates = getCertificates();
-        $siteInfo = getSiteInfo();
-        $unusedTechnologies = getUnusedTechnologies();
     }
 } catch (Throwable $e) {
     printError([

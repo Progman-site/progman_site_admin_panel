@@ -133,13 +133,22 @@ button[type="button"]
     margin: 20px;
 }
 
-.edit_panel input[type="text"], .edit_panel input[type="search"], input[type="number"], .edit_panel textarea {
+.edit_panel input[type="text"],
+.edit_panel input[type="search"],
+.edit_panel input[type="number"],
+.edit_panel textarea {
     width: 90%;
     padding: 10px 20px;
     margin-top: 10px;
     border-radius: 15px;
     font-size: 12px;
 }
+.edit_panel input[type="date"] {
+    font-weight: bolder;
+    padding: 6px 20px;
+    border-radius: 15px;
+}
+
 @media screen and (max-width: 736px) {
     .edit_panel input[type="text"], .edit_panel input[type="search"], input[type="number"], .edit_panel textarea {
         width: 88%;
@@ -442,3 +451,9 @@ button.reset {
     background: #fcb857;
     cursor: pointer;
 }
+
+.large_input{
+    width: 90% !important;
+    text-align: center;
+}
+

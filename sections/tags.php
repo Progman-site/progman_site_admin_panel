@@ -1,4 +1,7 @@
-<?php if(!isset($_SESSION['authorization'])) exit(); ?>
+<?php
+if(!isset($_SESSION['authorization'])) {exit();}
+$siteInfo = getSiteInfo();
+?>
 <form class="edit_panel" method="post" enctype="multipart/form-data">
     <h3>Tag content settings</h3>
     <input type="text" id="tag_search" value="" placeholder="Search by tag name or description">

@@ -35,14 +35,12 @@
         <input type="submit" class="<?= @$_GET['navigation'] == "certificates" ? "pressed" : "" ?>" name="navigation" value="certificates">
         <input type="submit" class="<?= @$_GET['navigation'] == "tags" ? "pressed" : "" ?>" name="navigation" value="tags">
         <input type="submit" class="<?= @$_GET['navigation'] == "courses" ? "pressed" : "" ?>" name="navigation" value="courses">
+        <input type="submit" class="<?= @$_GET['navigation'] == "coupons" ? "pressed" : "" ?>" name="navigation" value="coupons">
     </form>
 <?php
-    if (@$_GET['navigation'] == "tags") {
-        include "sections/tags.php";
-    } elseif (@$_GET['navigation'] == "certificates") {
-        include "sections/certificates.php";
-    } elseif (@$_GET['navigation'] == "courses") {
-        include "sections/courses.php";
+    $pageTemplate = isset($_GET['navigation']) ? "sections/{$_GET['navigation']}.php" : null;
+    if (file_exists($pageTemplate)) {
+        include $pageTemplate;
     } else {
         echo "<div class='welcome_block'>
                 <h2>WELCOME TO THE ADMIN ROOM</h2>
