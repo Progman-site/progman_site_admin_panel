@@ -647,19 +647,23 @@ function getCouponPlacements(): array {
  * @throws Exception
  */
 function updateCoupon($connect, array $data): string {
+    mysqli_begin_transaction($connect);
 
     if (@$data['coupons__id']) {
         sqlQuery("SELECT * FROM `coupons` WHERE `id` = '{$data['id']}'", false);
         sqlQuery(sprintf("UPDATE `coupons` 
-                SET `name` = '%s', `language` = '%s', `description` = '%s', `area` = '%s', `area_type` = '%s', `placement_id` = '%s', `active` = '%s' 
+                SET `name` = '%s', `language` = '%s', `description` = '%s', `value` = '%s', `is_active` = '%s', `max_times` = '%s', `expired_at` = '%s', `area` = '%s', `area_type` = '%s', `placement_id` = '%s'
                 WHERE `id` = '%s'",
             mysqli_real_escape_string($connect, $data['coupons__name']),
             mysqli_real_escape_string($connect, $data['coupons__language']),
             mysqli_real_escape_string($connect, $data['coupons__description']),
+            mysqli_real_escape_string($connect, $data['coupons__value']),
+            mysqli_real_escape_string($connect, $data['coupons__is_active']),
+            mysqli_real_escape_string($connect, $data['coupons__max_times']),
+            mysqli_real_escape_string($connect, $data['coupons__expired_at']),
             mysqli_real_escape_string($connect, $data['coupons__area']),
             mysqli_real_escape_string($connect, $data['coupons__area_type']),
             mysqli_real_escape_string($connect, $data['coupons__placement_id']),
-            mysqli_real_escape_string($connect, $data['coupons__active']),
             mysqli_real_escape_string($connect, $data['coupons__id'])
         ));
         $couponId = $data['coupons__id'];
@@ -680,16 +684,26 @@ function updateCoupon($connect, array $data): string {
             mysqli_real_escape_string($connect, $data['coupons__area_type']),
             mysqli_real_escape_string($connect, $data['coupons__placement_id'])
         ));
-        $serialNumber = generateCouponSerialNumber($couponId, $data['coupon_types__prefix']);
-        sqlQuery("UPDATE `coupons` SET `serial_number` = '{$serialNumber}' WHERE `id` = '{$couponId}';");
+        if ($data['coupons__method'] == COUPON_GENERATED_METHOD) {
+            $serialNumber = generateCouponSerialNumber($couponId, $data['coupon_types__prefix']);
+            sqlQuery("UPDATE `coupons` SET `serial_number` = '{$serialNumber}' WHERE `id` = '{$couponId}';");
+        } else {
+            if (isCouponSerialNumberExists($data['coupons__serial_number'])) {
+                throw new Exception(
+                    "Error while creating the coupon, the serial number '{$data['coupons__serial_number']}' is already exists!"
+                );
+            }
+            sqlQuery("UPDATE `coupons` SET `serial_number` = '{$data['coupons__serial_number']}' WHERE `id` = '{$couponId}';");
+        }
     }
+    mysqli_commit($connect);
     return "The coupon(id:{$couponId}) is successfully updated/created!";
 }
 
 function generateCouponSerialNumber(int $couponId, ?string $prefix = null): string {
     $charFirst = chr(rand(ord('a'), ord('z')));
     $charLast = chr(rand(ord('a'), ord('z')));
-    $serialNumber = ($prefix ? ($prefix . "-") : $charFirst) . $couponId .
+    $serialNumber = ($prefix ? ($prefix . "-") : strtoupper($charFirst)) . $couponId .
         strtoupper($charLast . substr(md5($couponId), 0, $prefix ? rand(3, 4) : rand(6, 8)));
     if (isCouponSerialNumberExists($serialNumber)) {
         throw new Exception(
@@ -704,4 +718,17 @@ function isCouponSerialNumberExists(string $serialNumber): bool {
             "SELECT * FROM `coupons` WHERE `serial_number` = '{$serialNumber}'",
             false
         ));
+}
+
+function deleteCoupon($connect, int $id): string {
+    $coupon = sqlQuery("SELECT * FROM `coupons` WHERE `id` = {$id}", false);
+    if (!$coupon) {
+        throw new Exception("The coupon(id:{$id}) is not found!");
+    }
+    mysqli_begin_transaction($connect);
+    if (sqlQuery("DELETE FROM `coupons` WHERE `id` = {$id};")) {
+        mysqli_commit($connect);
+        return "The coupon(id:{$coupon['id']}) is successfully deleted from the database!";
+    }
+    return "Error while deleting the coupon(id:{$coupon['id']})!";
 }

@@ -2,7 +2,7 @@ document.querySelectorAll('.changer').forEach(key => {
     key.addEventListener('click', event => {
         if (event.target.dataset.task === 'change') {
             event.target.parentElement.parentElement.querySelectorAll('input, textarea, select').forEach(item => {
-                if (!item.readOnly) {
+                if (!item.readOnly && !item.classList.contains('select_readonly')) {
                     item.disabled = false;
                 }
             });
@@ -570,9 +570,9 @@ document.querySelectorAll(
         }
 
         if (couponMethodSelector.value === 'generated') {
-            let prefixPart = couponTypeSelector.dataset.prefix ? `${couponTypeSelector.dataset.prefix}-` : ''
+            let prefixPart = couponTypeSelector.dataset.prefix ? `${couponTypeSelector.dataset.prefix}-` : '(Needs Type!)'
             serialNumberInput.value = ""
-            serialNumberInput.placeholder = `${prefixPart}XXXXXX (auto-generated)`
+            serialNumberInput.placeholder = `${prefixPart}XXXXXX`
             serialNumberInput.disabled = true
         } else {
             serialNumberInput.placeholder = "Write a full serial!"
@@ -580,16 +580,17 @@ document.querySelectorAll(
             serialNumberInput.disabled = false
         }
 
-        const typePrefixInput = event.target.parentElement.parentElement.querySelector(".coupon_types__prefix")
+        const typePrefixInput = event.target.parentElement.querySelector("input[name='coupon_types__prefix']")
         if (!couponTypeSelector.value) {
             couponDescriptionTextarea.rquired = true
             couponDescriptionTextarea.placeholder = "Write a description for the coupon (required!)"
-            typePrefixInput.value = couponTypeSelector.dataset.prefix
+            typePrefixInput.value = ""
         } else {
             couponDescriptionTextarea.rquired = false
             couponDescriptionTextarea.placeholder = "Coupon description (optional)"
-            typePrefixInput.value = ""
+            typePrefixInput.value = couponTypeSelector.dataset.prefix
         }
+        console.log(typePrefixInput)
     })
 })
 
@@ -609,5 +610,34 @@ document.querySelectorAll('select[name="coupons__coupon_unit_id"]').forEach(item
         ).innerText = couponUnitSelector.dataset.symbol
         couponUnitSelector.parentElement.parentElement.querySelector('.coupon_unit_formula').innerHTML
             = couponUnitSelector.dataset.formula
+    })
+})
+
+document.querySelectorAll('input[name="coupons__serial_number"]').forEach(item => {
+    item.addEventListener('input', event => {
+        if (event.target.value.length > 5) {
+            const formData = new FormData()
+            formData.append('form_name', 'checkCouponSerialNumber')
+            formData.append('serial_number', event.target.value)
+            fetch('admin_api_controller.php', {
+                method: "POST",
+                body: formData
+            }).then(
+                response => response.json().then(
+                    result => {
+                        if (result.status === "ok!") {
+                            if (result.data) {
+                                event.target.style.background = 'red'
+                            } else {
+                                event.target.style.background = 'lightgreen'
+                            }
+                        } else {
+                            alert('An unexpected error!');
+                        }
+                    }
+                ))
+        } else {
+            event.target.style.background = 'white'
+        }
     })
 })

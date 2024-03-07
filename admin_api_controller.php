@@ -51,6 +51,9 @@ try {
         case 'updateCoupon':
             printResult(updateCoupon($connect, $_POST));
             break;
+        case 'delCoupon':
+            printResult(deleteCoupon($connect, (int) $_POST['id']));
+            break;
         case 'checkCouponSerialNumber':
             printResult(isCouponSerialNumberExists($_POST['serial_number']));
             break;
