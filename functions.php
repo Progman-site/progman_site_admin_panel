@@ -699,6 +699,7 @@ function updateCoupon($connect, array $data): string {
                     "Error while creating the coupon, the serial number '{$data['coupons__serial_number']}' is already exists!"
                 );
             }
+            $data['coupons__serial_number'] = strtoupper($data['coupons__serial_number']);
             sqlQuery("UPDATE `coupons` SET `serial_number` = '{$data['coupons__serial_number']}' WHERE `id` = '{$couponId}';");
         }
     }
@@ -716,7 +717,7 @@ function generateCouponSerialNumber(int $couponId, ?string $prefix = null): stri
             "Error while generating the serial number, the serial number '{$serialNumber}' is already exists!"
         );
     }
-    return $serialNumber;
+    return strtoupper($serialNumber);
 }
 
 function isCouponSerialNumberExists(string $serialNumber): bool {
