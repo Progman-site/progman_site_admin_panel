@@ -289,6 +289,10 @@ $couponPlacements = getCouponPlacements();
                         </label>
                     </div>
                     <br>
+                    <div>
+                        <button title="Downloading the graphic picture of the certificate" style="color: darkgreen" onclick="downloadFile(<?= $item['id']?>, this.parentNode.parentNode, 'downloadCoupon')">DOWNLOAD</button>
+                    </div>
+                    <br>
                     <br>
                     <div>
                         <button class="changer" data-task="change" data-api_method="updateCoupon" data-id="<?=$item['id'] ?>">CHANGE</button>

@@ -3,6 +3,8 @@
 use ImageSigner\ImageBlank;
 use ImageSigner\constants\Fonts;
 use ImageSigner\constants\Colors;
+use libs\QRCode;
+
 
 function sqlConnect():mysqli
 {
@@ -621,22 +623,26 @@ function downloadCertificate(int $id): string {
     return $blank->getBase64(65);
 }
 
-function getCoupons(): array {
-    return sqlQuery("
+function getCoupons(int $id = null): array {
+    $coupons = sqlQuery("
         SELECT c.*, ct.`name` AS 'type', cu.`name` AS 'unit', cp.`name` AS 'placement' FROM `coupons` c
         LEFT JOIN `coupon_types` ct ON c.`coupon_type_id` = ct.`id`
         LEFT JOIN `coupon_units` cu ON c.`coupon_unit_id` = cu.`id`
-        LEFT JOIN `coupon_placements` cp ON c.`placement_id` = cp.`id`
+        LEFT JOIN `coupon_placements` cp ON c.`placement_id` = cp.`id` "
+        . ($id ? "WHERE c.`id` = {$id}" : "" ) . "
         ORDER BY c.`id` DESC;
     ");
+    return $id ? $coupons[0] : $coupons;
 }
 
-function getCouponUnits(): array {
-    return sqlQuery("SELECT * FROM `coupon_units`");
+function getCouponUnits(?int $id = null): array {
+    $units = sqlQuery("SELECT * FROM `coupon_units` " . ($id ? "WHERE `id` = {$id}" : "" ) . ";");
+    return $id ? $units[0] : $units;
 }
 
-function getCouponTypes(): array {
-    return sqlQuery("SELECT * FROM `coupon_types`");
+function getCouponTypes(?int $id = null): array {
+    $types = sqlQuery("SELECT * FROM `coupon_types` " . ($id ? "WHERE `id` = {$id}" : "" ) . ";");
+    return $id ? $types[0] : $types;
 }
 
 function getCouponPlacements(): array {
@@ -731,4 +737,78 @@ function deleteCoupon($connect, int $id): string {
         return "The coupon(id:{$coupon['id']}) is successfully deleted from the database!";
     }
     return "Error while deleting the coupon(id:{$coupon['id']})!";
+}
+
+function createGDQRimage(string $data, $size = 12) {
+    $qr = new QRCode();
+    $qr->setErrorCorrectLevel(QR_ERROR_CORRECT_LEVEL_L);
+
+    $qr->setTypeNumber(4);
+
+    $qr->addData($data);
+    $qr->make();
+    return $qr->createImage($size, fg: 0xFFFFFE,  bgtrans: true);
+}
+
+function downloadCoupon(int $couponId):string {
+    $templateFile = __DIR__ . "/images/coupon_template.jpg";
+    $couponData = getCoupons($couponId);
+    $couponType = getCouponTypes($couponData['coupon_type_id']);
+    $couponUnit = getCouponUnits($couponData['coupon_unit_id']);
+    $valueString = "[ " . ($couponUnit['symbol_placement'] == 'before' ? "{$couponUnit['symbol']}{$couponData['value']}" : "{$couponData['value']}{$couponUnit['symbol']}") . " ]";
+    $blank = new ImageBlank($templateFile);
+    $blank
+        ->addGDImage(
+            createGDQRimage($couponType['use_link'] . "?coupon={$couponData['serial_number']}"),
+            400,
+            400,
+            228,
+            510
+        )
+        ->addString(
+            "{$valueString} {$couponData['name']}",
+            56,
+            round($blank->getXSize() * 0.50),
+            round($blank->getYSize() * 0.308),
+            Fonts::AVENIR_NEXT_CYR
+        )
+        ->addString(
+            $couponData['serial_number'],
+            80,
+            round($blank->getXSize() * 0.64),
+            round($blank->getYSize() * 0.62),
+            Fonts::ARIAL_BLACK,
+            color: Colors::BLACK
+        )
+        ->addString(
+            $couponData['description'],
+            22,
+            round($blank->getXSize() * 0.64),
+            round($blank->getYSize() * 0.44),
+            Fonts::CALIBRI,
+        )
+        ->addString(
+            $couponType['use_link'],
+            38,
+            round($blank->getXSize() * 0.66),
+            round($blank->getYSize() * 0.77),
+            Fonts::CALIBRI,
+        )
+        ->addString(
+            date($couponData['language'] == "en" ? "m/d/Y" : "d.m.Y", strtotime($couponData['expired_at'])),
+            24,
+            round($blank->getXSize() * 0.525),
+            round($blank->getYSize() * 0.873),
+            Fonts::ARIAL_REGULAR,
+            color: Colors::BLACK
+        )
+        ->addString(
+            $couponData['max_times'],
+            24,
+            round($blank->getXSize() * 0.868),
+            round($blank->getYSize() * 0.873),
+            Fonts::ARIAL_REGULAR,
+            color: Colors::BLACK
+        );
+    return $blank->getBase64(65);
 }

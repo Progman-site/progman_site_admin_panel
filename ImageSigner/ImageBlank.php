@@ -175,4 +175,9 @@ class ImageBlank extends Colors
         }
         return $this;
     }
+
+    public function addGDImage(GdImage $image, int $sizeX, int $sizeY, int $dstX = 0, int $dstY = 0): self {
+        imagecopy($this->blank, $image, $dstX, $dstY, 0, 0, $sizeX, $sizeY);
+        return $this;
+    }
 }

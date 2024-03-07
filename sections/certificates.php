@@ -101,7 +101,7 @@ $certificates = getCertificates();
                     <br/><br/>
                     <button class="deleter" title="delete the certificate" data-id=<?= $item['id']?> data-api_method="delCertificate">del</button>
                     <br/><br/><br/><br/><br/>
-                    <button title="Downloading the graphic picture of the certificate" onclick="downloadCertificate(<?= $item['id']?>, this.parentNode.parentNode)">DOWNLOAD</button>
+                    <button title="Downloading the graphic picture of the certificate" onclick="downloadFile(<?= $item['id']?>, this.parentNode.parentNode, 'downloadCertificate')">DOWNLOAD</button>
                 </div>
                 <div>
                     <br>

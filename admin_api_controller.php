@@ -4,6 +4,7 @@ session_start();
 require_once "init.php";
 require_once "functions.php";
 require_once 'ImageSigner/image_signer.inc.php';
+require_once 'libs/QRcode.php';
 
 
 if (!isset($_SESSION['authorization'])) {
@@ -57,6 +58,8 @@ try {
         case 'checkCouponSerialNumber':
             printResult(isCouponSerialNumberExists($_POST['serial_number']));
             break;
+        case 'downloadCoupon':
+            printResult(downloadCoupon($_POST['id']));
     }
 } catch (Throwable $e) {
     printError([

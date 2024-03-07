@@ -212,7 +212,7 @@ document.querySelectorAll('.deleter').forEach(key => {
     });
 });
 
-function urlToFile(data, theElement, name = 'certificate'){
+function urlToFile(data, theElement, fileName = 'certificate'){
     let popup = document.createElement('div');
     popup.style = "width: 99vw; left: 0; position: absolute; z-index: 2;";
     let closer = document.createElement('span');
@@ -223,7 +223,7 @@ function urlToFile(data, theElement, name = 'certificate'){
     let img = document.createElement('img');
     img.src = 'data:image/jpeg;base64,' + data;
     img.style = "margine: 40px; width: 99%";
-    img.filename="PM_school_cert.png"
+    img.filename = `PM_${fileName}.png`
     let a = document.createElement('a');
     a.download = "PM_school_cert.png";
     a.href = 'data:image/jpeg;base64,' + data;
@@ -234,15 +234,15 @@ function urlToFile(data, theElement, name = 'certificate'){
     theElement.appendChild(popup);
 }
 
-function downloadCertificate(id, theElement) {
+function downloadFile(id, theElement, apiMethod) {
     let formData = new FormData();
-    formData.append('form_name', 'downloadCertificate');
+    formData.append('form_name', apiMethod);
     formData.append('id', id);
     fetch('admin_api_controller.php', {
         method: "POST",
         body: formData
     }).then(response => response.json().then(result => {
-        urlToFile(result.data, theElement)
+        urlToFile(result.data, theElement, apiMethod)
     })).then(res => console.log(res));
 }
 
