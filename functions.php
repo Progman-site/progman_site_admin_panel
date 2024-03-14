@@ -711,7 +711,7 @@ function generateCouponSerialNumber(int $couponId, ?string $prefix = null): stri
     $charFirst = chr(rand(ord('a'), ord('z')));
     $charLast = chr(rand(ord('a'), ord('z')));
     $serialNumber = ($prefix ? ($prefix . "-") : strtoupper($charFirst)) . $couponId .
-        strtoupper($charLast . substr(md5($couponId), 0, $prefix ? rand(3, 4) : rand(6, 8)));
+        strtoupper($charLast . substr(md5($couponId), 0, $prefix ? rand(5, 6) : rand(6, 8)));
     if (isCouponSerialNumberExists($serialNumber)) {
         throw new Exception(
             "Error while generating the serial number, the serial number '{$serialNumber}' is already exists!"
