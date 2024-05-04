@@ -143,7 +143,12 @@ $couponPlacements = getCouponPlacements();
 
     <?php foreach ($coupons as $item) { ?>
         <details>
-            <summary <?= (!$item["is_active"] || strtotime($item["expired_at"]) < time()) ? 'style="color: dimgray"' : '' ?>><?= $item["name"] ?> <b><?= $item["serial_number"] ?></b> <span style="font-style: italic"><?= strtotime($item["expired_at"]) < time() ? '(expired)' : '' ?></span></summary>
+            <summary <?= (!$item["is_active"] || $item["max_times"] <= $item["used_times"] || strtotime($item["expired_at"]) < time()) ? 'style="color: dimgray"' : '' ?>><?= $item["name"] ?>
+                <b><?= $item["serial_number"] ?> | Used: <?= $item["used_times"] ?>/<?= $item["max_times"] ?></b>
+                <span style="font-style: italic">
+                    <?= $item["max_times"] <= $item["used_times"] ? ' (Used Up!)' : (strtotime($item["expired_at"]) < time() ? " (expired {$item["expired_at"]})" : '') ?>
+                </span>
+            </summary>
             <div data-form_name="user_data">
                 Created: <b><?= date('m/d/Y', strtotime($item["created_at"])) ?></b>&nbsp;&nbsp;|&nbsp;&nbsp;Last update: <b><?= date('m/d/Y H:i', strtotime($item["updated_at"])) ?></b>
                 <div>
