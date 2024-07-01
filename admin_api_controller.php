@@ -60,6 +60,10 @@ try {
             break;
         case 'downloadCoupon':
             printResult(downloadCoupon($_POST['id']));
+            break;
+        case 'getRequest':
+            printResult(getRequestsByFieldName($_POST['field'], $_POST['value']));
+            break;
     }
 } catch (Throwable $e) {
     printError([

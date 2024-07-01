@@ -813,3 +813,15 @@ function downloadCoupon(int $couponId):string {
         );
     return $blank->getBase64(65);
 }
+
+function getRequestsByFieldName(?string $field = null, mixed $value = null): array {
+    $requests = sqlQuery("
+        SELECT r.*, p.`name` AS 'product', u.`real_last_name`, u.`real_first_name`, u.`real_middle_name`, u.`id` AS 'user_id' 
+        FROM `requests` r
+        LEFT JOIN `products` p ON r.`product_id` = p.`id`
+        LEFT JOIN `users` u ON r.`user_id` = u.`id`"
+        . ($field ? "WHERE r.`{$field}` = {$value}" : "" ) . "
+        ORDER BY r.`id` DESC;
+    ");
+    return count($requests) < 1 ? $requests[0] : $requests;
+}

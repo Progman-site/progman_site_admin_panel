@@ -129,7 +129,7 @@ document.querySelectorAll('.search_field').forEach(elem => {
             return false;
         }
         let formData = new FormData();
-        formData.append('form_name', 'userSearch');
+        formData.append('form_name', event.target.dataset.form_name ?? 'userSearch');
         formData.append('field', event.target.dataset.field);
         formData.append('value', event.target.value);
         fetch('admin_api_controller.php', {

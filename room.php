@@ -36,6 +36,7 @@
         <input type="submit" class="<?= @$_GET['navigation'] == "tags" ? "pressed" : "" ?>" name="navigation" value="tags">
         <input type="submit" class="<?= @$_GET['navigation'] == "courses" ? "pressed" : "" ?>" name="navigation" value="courses">
         <input type="submit" class="<?= @$_GET['navigation'] == "coupons" ? "pressed" : "" ?>" name="navigation" value="coupons">
+        <input type="submit" class="<?= @$_GET['navigation'] == "purchases" ? "pressed" : "" ?>" name="navigation" value="purchases">
     </form>
 <?php
     $pageTemplate = isset($_GET['navigation']) ? "sections/{$_GET['navigation']}.php" : null;
