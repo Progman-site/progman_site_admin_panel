@@ -62,7 +62,11 @@ try {
             printResult(downloadCoupon($_POST['id']));
             break;
         case 'getRequest':
-            printResult(getRequestsByFieldName($_POST['field'], $_POST['value']));
+            $requests = getRequestsByFieldName($_POST['field'], $_POST['value']);
+            if (isset($requests['created_at'])) {
+                $requests['created_at'] = date('m/d/Y H:i:s', $requests['created_at']);
+            }
+            printResult($requests);
             break;
     }
 } catch (Throwable $e) {

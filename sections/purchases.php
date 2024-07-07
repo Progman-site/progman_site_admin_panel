@@ -15,19 +15,19 @@ $siteInfo = getSiteInfo();
             </label>
             <br>
             <br>
-            <label>UID (<span id="requests__uid_type"></span>): <span id="requests__contact"></span></label>
+            <label>UID (<input name="requests__uid_type" style="width: 50px" placeholder="empty" disabled>): <input name="requests__contact" placeholder="empty" disabled></label>
             <br>
             <br>
-            <label>Name: <span id="requests__name"></span></label>
+            <label>Name: <input name="requests__name" placeholder="empty" disabled></label>
             <br>
             <br>
-            <label>Created: <span id="requests__created_at"></span></label>
+            <label>Created: <input name="requests__created_at" placeholder="empty" disabled></label>
             <br>
             <br>
-            <label>Product: <span id="products__name"></span> [<span id="requests__quantity"></span> ea]</label>
+            <label>Product: <input name="products__name" placeholder="empty" disabled> [<input name="requests__quantity" style="width: 50px" placeholder="empty" disabled> ea]</label>
             <br>
             <br>
-            <label>Coupon: <span id="coupons__serial_number"></span></label>
+            <label>Coupon: <input name="coupons__serial_number" placeholder="empty" disabled></label>
         </div>
         <div style="margin-top: 20px">
             <label><span id="purchases__total_price"></span></label><br>
@@ -46,7 +46,7 @@ $siteInfo = getSiteInfo();
                     <input type="text" name="purchases__service_fee" id="" placeholder="00.00" style="width: 100px">
                 </label>
                 <br><br>
-                <textarea name="purchases__payment_details" cols="30" rows="10" placeholder="Clear JSON only!"></textarea>
+                <textarea class="json_only" name="purchases__payment_details" cols="30" rows="10" placeholder="Clear JSON only!"></textarea>
                 <br><br>
                 <textarea name="purchases__comment" cols="30" rows="10" placeholder="Comment"></textarea>
                 <br><br>

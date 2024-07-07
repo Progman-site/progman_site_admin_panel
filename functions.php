@@ -823,5 +823,5 @@ function getRequestsByFieldName(?string $field = null, mixed $value = null): arr
         . ($field ? "WHERE r.`{$field}` = {$value}" : "" ) . "
         ORDER BY r.`id` DESC;
     ");
-    return count($requests) < 1 ? $requests[0] : $requests;
+    return count($requests) > 1 ? $requests : $requests[0];
 }

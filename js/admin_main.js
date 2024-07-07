@@ -147,7 +147,7 @@ document.querySelectorAll('.search_field').forEach(elem => {
                                 result.data[oneElem.name.split('__')[1]] !== undefined
                                 && result.data[oneElem.name.split('__')[1]]
                             ) {
-                                oneElem.value = result.data[oneElem.name.split('__')[1]];
+                                oneElem.value = result.data[oneElem.name.split('__')[1]] ?? 'none';
                                 oneElem.style.background = 'lightgreen';
                             }
                         });
@@ -638,6 +638,29 @@ document.querySelectorAll('input[name="coupons__serial_number"]').forEach(item =
                 ))
         } else {
             event.target.style.background = 'white'
+        }
+    })
+})
+
+document.querySelectorAll('.json_only').forEach(item => {
+    item.addEventListener('input', event => {
+        const jsonField = event.target
+        event.target.value = event.target.value.trim()
+        if (jsonField.value === '') {
+            jsonField.style.background = 'white'
+            jsonField.setCustomValidity('')
+            jsonField.validity.valid = true
+            return false
+        }
+        try {
+            JSON.parse(jsonField.value)
+            jsonField.style.background = 'lightgreen'
+            jsonField.setCustomValidity('')
+            jsonField.validity.valid = true
+        } catch (e) {
+            jsonField.style.background = 'lightsalmon'
+            jsonField.setCustomValidity('Invalid JSON data!')
+            jsonField.validity.valid = false
         }
     })
 })
