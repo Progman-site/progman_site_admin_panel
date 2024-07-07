@@ -49,12 +49,25 @@ document.querySelectorAll('.changer').forEach(key => {
             }).then(
                 response => response.json().then(
                     result => {
-                        console.log(result);
                         if (result.status === "ok!") {
-                            alert(result.data);
-                            location.reload();
+                            alert(result.data)
+                            location.reload()
+                        } else if (result.status === "error") {
+                            console.log(result);
+                            try {
+                                let data = result.data
+                                if (data.message) {
+                                    alert(`Ups! ${data.message}`)
+                                } else {
+                                    alert('An unexpected type of error!')
+                                }
+                            } catch (e) {
+                                console.log(e)
+                                alert('An unreadable error!')
+                            }
                         } else {
-                            alert('An unexpected error!');
+                            alert('An unexpected error!')
+                            console.log(result)
                         }
                     }
                 ))

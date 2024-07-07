@@ -3,9 +3,10 @@ if (!isset($_SESSION['authorization'])) {
     exit();
 }
 $siteInfo = getSiteInfo();
+$purchases = getAllPurchasesByFieldName();
 ?>
 
-<div class="edit_panel certificates price_list">
+<div class="edit_panel purchases price_list">
     <h3>Purchase control</h3>
     <div id="new_price_item">
         <b>Register a NEW Purchase/Payment</b>
@@ -24,10 +25,19 @@ $siteInfo = getSiteInfo();
             <label>Created: <input name="requests__created_at" placeholder="empty" disabled></label>
             <br>
             <br>
-            <label>Product: <input name="products__name" placeholder="empty" disabled> [<input name="requests__quantity" style="width: 50px" placeholder="empty" disabled> ea]</label>
+            <label>STATUS: <input name="coupons__status" style="font-weight: bolder; width: 80px; text-transform: uppercase" placeholder="empty" disabled></label>
             <br>
             <br>
-            <label>Coupon: <input name="coupons__serial_number" placeholder="empty" disabled></label>
+            <label>Product: <input name="requests__product_name" placeholder="empty" disabled readonly> [<input name="requests__quantity" style="width: 30px" placeholder="empty" disabled>ea * <input name="requests__current_product_price" style="width: 50px" placeholder="empty" disabled>]</label>
+            <br>
+            <br>
+            <label>Coupon: <input name="coupons__coupon_serial_number" placeholder="empty" disabled> </label>
+            <br>
+            <br>
+            <label><input name="requests__coupon_formula" placeholder="empty" disabled> D=<input name="requests__coupon_value" style="width: 50px" placeholder="empty" disabled></label>
+            <br>
+            <br>
+            <label>TOTAL: $<input name="requests__total_price" style="font-weight: bolder; width: 80px; text-transform: uppercase" placeholder="empty" disabled></label>
         </div>
         <div style="margin-top: 20px">
             <label><span id="purchases__total_price"></span></label><br>
@@ -53,85 +63,72 @@ $siteInfo = getSiteInfo();
             </div>
         </div>
         <div>
-            <button class="changer" data-task="save" data-api_method="updatePurchase" data-id="">REGISTER PAYMENT</button>
+            <button class="changer" data-task="save" data-api_method="updatePurchase" data-id="">REGISTER PURCHASE PAYMENT</button>
         </div>
     </div>
 
-    <?php $count = 0; foreach ($certificates as $item) { ?>
+    <?php $count = 0; foreach ($purchases as $item) { ?>
         <details>
-            <summary><b><?= $item["real_first_name"] ?> <?= $item["real_last_name"] ?></b> certificate</summary>
-            <div data-form_name="user_data">
+            <summary><b>#<?= $item["request_id"] ?> <?= $item["request_name"] ?></b> "<?= $item["product_name"] ?>" (<?= date("m/d/Y", strtotime($item["created_at"])) ?>)</summary>
+            <div data-form_name="user_data" style="text-align: center">
+                <input type="hidden" name="purchase_id" value="<?= $item["id"] ?>">
                 <div>
-                    <strong># <?= $item["full_number"] ?></strong><br><br>
-                    <input type="hidden" name="users__id" data-field="user_id" value="<?= $item["user_id"] ?>">
-                    <span>Start: <?= date('d-m-Y', strtotime($item["date"])) ?></span>
-                    <br><br>
-                    <label>Tg nick: <b><?= $item["tg_name"]  ?? "-" ?></b></label>
+                    <label>Request ID:
+                        <input type="text" name="requests__id" style="background: lightgray" value="<?= $item["request_id"] ?>" readonly>
+                    </label>
                     <br>
-                    <label>Tg DI: <b><?= $item["tg_id"]   ?? "-" ?></b></label>
-                    <br><br>
-                    <label>Email-name: <b><?= $item["email_name"]  ?? "-" ?></b></label>
                     <br>
-                    <label>Email: <b><?= $item["email_id"]  ?? "-" ?></b></label>
-                    <br><br>
-                    <input type="text" name="users__real_first_name" placeholder="a legal first name" value="<?= $item["real_first_name"] ?>" required disabled><br>
-                    <input type="text" name="users__real_last_name" placeholder="a legal last name" value="<?= $item["real_last_name"] ?>" required disabled><br>
-                    <input type="text" name="users__real_middle_name" placeholder="a legal middle name" value="<?= $item["real_middle_name"] ?>" disabled>
-                </div>
-                <div>
-                    <textarea name="certificates__description" cols="30" rows="10" placeholder="Special notes" disabled><?= $item['description'] ?></textarea>
-                    <br><br>
-                    <div>
-                        Course: <strong><?= $item['course']?></strong>
-                    </div>
+                    <label>UID (<input name="requests__uid_type" style="width: 50px"  value="<?= $item["request_uid_type"] ?>" disabled readonly>): <input name="requests__contact" value="<?= $item["request_contact"] ?>" disabled readonly></label>
                     <br>
-                    <strong>type: <span class="course_type"><?= $item['id']?></span></strong>
-                    &nbsp;&nbsp;
-                    <strong>Level: <span class="course_level"><?= $item['level']?></span></strong>
-                    <h4>Technologies:</h4>
-                </div>
-                <div>
-                    <button class="changer" title="unblock changing of the certificate" data-task="change" data-api_method="updateCertificates" data-id="<?= $item['id']?>">change</button>
-                    <br/><br/>
-                    <button class="deleter" title="delete the certificate" data-id=<?= $item['id']?> data-api_method="delCertificate">del</button>
-                    <br/><br/><br/><br/><br/>
-                    <button title="Downloading the graphic picture of the certificate" onclick="downloadFile(<?= $item['id']?>, this.parentNode.parentNode, 'downloadCertificate')">DOWNLOAD</button>
-                </div>
-                <div>
                     <br>
-                    <div>
-                        <label>
-                            Hours:
-                            <input type="number" name="certificates__hours" placeholder="count of hours" value="<?= $item['hours']?>" disabled>
-                        </label>
-                    </div>
+                    <label>Name: <input name="requests__name"  value="<?= $item["request_name"] ?>" disabled readonly></label>
                     <br>
-                    <strong>LANG: <span class="course_type"><?= $item['language']?></span></strong>
-                    &nbsp;&nbsp;
-                    <label>
-                        BLANK:
-                        <select name="certificates__blank" disabled>
-                            <option value="en" <?= $item['blank'] == 'en' ? 'selected': '' ?>>en</option>
-                            <option value="ru" <?= $item['blank'] == 'ru' ? 'selected': '' ?>>ru</option>
+                    <br>
+                    <label>Created: <input name="requests__created_at"  value="<?= date("m/d/Y H:i:s", strtotime($item["request_created_at"])) ?>" disabled readonly></label>
+                    <br>
+                    <br>
+                    <label>STATUS: <input name="request__status" style="font-weight: bolder; width: 80px; text-transform: uppercase" value="<?= $item["request_status"] ?>" disabled readonly></label>
+                    <br>
+                    <br>
+                    <label>Product: <input name="requests__product_name" value="<?= $item["product_name"] ?>" disabled readonly> [<input name="requests__quantity" style="width: 30px" value="<?= $item["request_quantity"] ?>" disabled readonly>ea * <input name="request_current_product_price" style="width: 50px" value="<?= $item["request_current_product_price"] ?>" disabled readonly>]</label>
+                    <br>
+                    <br>
+                    <label>Coupon: <input name="coupons__coupon_serial_number" value="<?= $item["coupon_serial_number"] ?>" disabled readonly> </label>
+                    <br>
+                    <br>
+                    <label><input name="requests__coupon_formula" value="<?= $item["coupon_formula"] ?>" disabled readonly> D=<input name="requests__coupon_value" style="width: 50px" value="<?= $item["coupon_value"] ?>" disabled readonly></label>
+                    <br>
+                    <br>
+                    <label>TOTAL: $<input name="requests__total_price" style="font-weight: bolder; width: 80px; text-transform: uppercase"
+                                          value="<?= $requests['total_price'] = countPriceByCoupon($item['request_current_product_price'], $item['coupon_value'], $item['coupon_formula'], $item['request_quantity']) ?>"
+                                    disabled readonly></label>
+                    <br>
+                    <br>
+                    <label>Payment type:
+                        <select name="purchases__payment_type" required disabled>
+                            <?php foreach (PURCHASE_PAYMENT_TYPES as $purchaseMethod) { ?>
+                                <option
+                                        value="<?= $purchaseMethod ?>"
+                                    <?= $purchaseMethod == $item["method"] ? "selected" : "" ?>
+                                >
+                                    <?= ucfirst(str_replace("_", " ", $purchaseMethod)) ?>
+                                </option>
+                            <?php } ?>
                         </select>
                     </label>
+                &nbsp;&nbsp;
+                    <label>Service fee:
+                        <input type="text" name="purchases__service_fee" id="" placeholder="00.00" value="<?= $item["service_fee"] ?>" style="width: 100px" required disabled>
+                    </label>
+                    <br><br>
+                    <textarea class="json_only" name="purchases__payment_details" cols="30" rows="10" placeholder="Clear JSON only!" required disabled><?= $item["payment_details"] ?></textarea>
+                    <br><br>
+                    <textarea name="purchases__comment" cols="30" rows="10" placeholder="Comment" required disabled><?= $item["comment"] ?></textarea>
+                    <br><br>
                 </div>
                 <div>
-                    <div class="checkbox_list">
-                        <?php foreach ($courses[$item['course_id']]['technologies_arr'] as $technologyData) { ?>
-                            <label title="<?= $technologyData['descriptions'] ?>">
-                                <input
-                                    type="checkbox"
-                                    name="technologies__<?= $technologyData['id'] ?>"
-                                    value=<?= @in_array($technologyData['id'], $item['technologies_ids']) ? 1 : 0 ?>
-                                    onchange="this.value = Number(this.checked)"
-                                <?= @in_array($technologyData['id'], $item['technologies_ids']) ? 'checked' : '' ?>
-                                disabled
-                                >
-                                <?= $technologyData['name'] ?>
-                            </label>
-                        <?php } ?>
-                    </div>
+                    <button class="changer" data-task="change" data-api_method="updateCoupon" data-id="<?=$item['id'] ?>">CHANGE</button>
+                    <button class="deleter" title="delete the course" data-id=<?= $item['id']?> data-api_method="delCoupon">del</button>
                 </div>
             </div>
         </details>

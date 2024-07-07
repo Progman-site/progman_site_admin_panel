@@ -816,12 +816,79 @@ function downloadCoupon(int $couponId):string {
 
 function getRequestsByFieldName(?string $field = null, mixed $value = null): array {
     $requests = sqlQuery("
-        SELECT r.*, p.`name` AS 'product', u.`real_last_name`, u.`real_first_name`, u.`real_middle_name`, u.`id` AS 'user_id' 
+        SELECT r.*, c.`serial_number` AS 'coupon_serial_number', cu.`formula` AS 'coupon_formula', c.`value` AS 'coupon_value', p.`name` AS 'product_name', u.`real_last_name`, u.`real_first_name`, u.`real_middle_name`, u.`id` AS 'user_id' 
         FROM `requests` r
         LEFT JOIN `products` p ON r.`product_id` = p.`id`
+        LEFT JOIN `coupons` c ON r.`coupon_id` = c.`id`
+        LEFT JOIN `coupon_units` cu ON c.`coupon_unit_id` = cu.`id`
         LEFT JOIN `users` u ON r.`user_id` = u.`id`"
         . ($field ? "WHERE r.`{$field}` = {$value}" : "" ) . "
         ORDER BY r.`id` DESC;
     ");
     return count($requests) > 1 ? $requests : $requests[0];
+}
+
+function getAllPurchasesByFieldName(?string $field = null, mixed $value = null): array {
+    $purchases = sqlQuery("
+        SELECT p.*, r.`id` AS 'request_id', r.`uid_type` AS 'request_uid_type', r.`contact` AS 'request_contact', r.`name` AS 'request_name', r.`created_at` AS 'request_created_at', r.`quantity` AS 'request_quantity', r.`current_product_price` AS 'request_current_product_price', r.`status` AS 'request_status', c.`serial_number` AS 'coupon_serial_number', cu.`formula` AS 'coupon_formula', c.`value` AS 'coupon_value', pr.`name` AS 'product_name', u.`real_last_name`, u.`real_first_name`, u.`real_middle_name`, u.`id` AS 'user_id'
+        FROM `purchases` p
+        LEFT JOIN `requests` r ON p.`request_id` = r.`id`
+        LEFT JOIN `products` pr ON r.`product_id` = pr.`id`
+        LEFT JOIN `coupons` c ON r.`coupon_id` = c.`id`
+        LEFT JOIN `coupon_units` cu ON c.`coupon_unit_id` = cu.`id`
+        LEFT JOIN `users` u ON r.`user_id` = u.`id`"
+        . ($field ? "WHERE r.`{$field}` = {$value}" : "" ) . "
+        ORDER BY p.`id` DESC;
+    ");
+    return $purchases;
+}
+
+function registerPurchase($connect, array $data, $autoProcessed = false): string {
+    $purchase = sqlQuery("SELECT * FROM `purchases` WHERE `request_id` = '{$data['requests__id']}'", false);
+    if ($purchase) {
+        $date = date('m/d/Y H:i:s', strtotime($purchase['created_at']));
+        throw new Exception("The payment of purchase for the request(id:{$data['requests__id']}) is already processed at {$date}!");
+    }
+    $request = getRequestsByFieldName('id', $data['requests__id']);
+    $totalPrice = $request['current_product_price'] * $request['quantity'];
+    $method = $autoProcessed ? 'auto' : 'manager';
+    $adminId = $_SESSION['authorization']['id'] ?? null;
+    mysqli_begin_transaction($connect);
+    $purchase = sqlQuery(sprintf("INSERT INTO `purchases` SET `request_id` = '%s', `total_price` = '%s', `payment_type` = '%s', `payment_details` = '%s', `service_fee` = '%s', `comment` = '%s', `admin_id` = '%s', `method` = '%s';",
+        mysqli_real_escape_string($connect, $request['id']),
+        mysqli_real_escape_string($connect, $totalPrice),
+        mysqli_real_escape_string($connect, $data['purchases__payment_type']),
+        mysqli_real_escape_string($connect, $data['purchases__payment_details']),
+        mysqli_real_escape_string($connect, $data['purchases__service_fee']),
+        mysqli_real_escape_string($connect, $data['purchases__comment']),
+        mysqli_real_escape_string($connect, $adminId),
+        mysqli_real_escape_string($connect, $method)
+    ));
+    mysqli_commit($connect);
+    if (!$purchase) {
+        throw new Exception("Error while generating the purchase for the request(id:{$request['id']})!");
+    }
+    return "The purchase(id:{$purchase}) is successfully created!";
+}
+
+function updatePurchase($connect, array $data): string {
+    $purchase = sqlQuery("SELECT * FROM `purchases` WHERE `id` = '{$data['id']}'", false);
+    if (!$purchase) {
+        throw new Exception("The purchase(id:{$data['id']}) is not found!");
+    }
+    mysqli_begin_transaction($connect);
+    sqlQuery(sprintf("UPDATE `purchases` SET `payment_type` = '%s', `payment_details` = '%s', `service_fee` = '%s', `comment` = '%s' WHERE `id` = '%s'",
+        mysqli_real_escape_string($connect, $data['purchases__payment_type']),
+        mysqli_real_escape_string($connect, $data['purchases__payment_details']),
+        mysqli_real_escape_string($connect, $data['purchases__service_fee']),
+        mysqli_real_escape_string($connect, $data['purchases__comment']),
+        mysqli_real_escape_string($connect, $purchase['id'])
+    ));
+    mysqli_commit($connect);
+    return "The purchase(id:{$purchase['id']}) is successfully updated!";
+}
+
+function countPriceByCoupon(float $price, float|int $couponValue, string $formula, int $quantity = 1): float {
+    $filledFormula = str_replace(['A', 'P', 'D'], [$quantity, $price, $couponValue], $formula);
+    return eval("return $filledFormula;");
 }

@@ -64,9 +64,17 @@ try {
         case 'getRequest':
             $requests = getRequestsByFieldName($_POST['field'], $_POST['value']);
             if (isset($requests['created_at'])) {
-                $requests['created_at'] = date('m/d/Y H:i:s', $requests['created_at']);
+                $requests['created_at'] = date('m/d/Y H:i:s', strtotime($requests['created_at']));
             }
+            $requests['total_price'] = countPriceByCoupon($requests['current_product_price'], $requests['coupon_value'], $requests['coupon_formula'], $requests['quantity']);
             printResult($requests);
+            break;
+        case 'updatePurchase':
+            if (isset($_POST['id'])) {
+                printResult(updatePurchase($connect, $_POST));
+            } else {
+                printResult(registerPurchase($connect, $_POST));
+            }
             break;
     }
 } catch (Throwable $e) {
