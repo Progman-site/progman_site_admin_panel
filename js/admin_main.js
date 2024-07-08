@@ -57,7 +57,7 @@ document.querySelectorAll('.changer').forEach(key => {
                             try {
                                 let data = result.data
                                 if (data.message) {
-                                    alert(`Ups! ${data.message}`)
+                                    alert(`Ups!\n${data.message}`)
                                 } else {
                                     alert('An unexpected type of error!')
                                 }

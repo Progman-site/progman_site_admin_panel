@@ -109,7 +109,7 @@ $purchases = getAllPurchasesByFieldName();
                             <?php foreach (PURCHASE_PAYMENT_TYPES as $purchaseMethod) { ?>
                                 <option
                                         value="<?= $purchaseMethod ?>"
-                                    <?= $purchaseMethod == $item["method"] ? "selected" : "" ?>
+                                    <?= $purchaseMethod == $item["payment_type"] ? "selected" : "" ?>
                                 >
                                     <?= ucfirst(str_replace("_", " ", $purchaseMethod)) ?>
                                 </option>
@@ -127,7 +127,7 @@ $purchases = getAllPurchasesByFieldName();
                     <br><br>
                 </div>
                 <div>
-                    <button class="changer" data-task="change" data-api_method="updateCoupon" data-id="<?=$item['id'] ?>">CHANGE</button>
+                    <button class="changer" data-task="change" data-api_method="updatePurchase" data-id="<?=$item['id'] ?>">CHANGE</button>
                     <button class="deleter" title="delete the course" data-id=<?= $item['id']?> data-api_method="delCoupon">del</button>
                 </div>
             </div>
