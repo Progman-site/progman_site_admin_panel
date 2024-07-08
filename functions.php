@@ -892,3 +892,16 @@ function countPriceByCoupon(float $price, float|int $couponValue, string $formul
     $filledFormula = str_replace(['A', 'P', 'D'], [$quantity, $price, $couponValue], $formula);
     return eval("return $filledFormula;");
 }
+
+function delPurchase($connect, int $id): string {
+    $purchase = sqlQuery("SELECT * FROM `purchases` WHERE `id` = {$id}", false);
+    if (!$purchase) {
+        throw new Exception("The purchase(id:{$id}) is not found!");
+    }
+    mysqli_begin_transaction($connect);
+    if (sqlQuery("DELETE FROM `purchases` WHERE `id` = {$id};")) {
+        mysqli_commit($connect);
+        return "The purchase/payment(id:{$purchase['id']}) is successfully deleted from the database!";
+    }
+    return "Error while deleting the purchase(id:{$purchase['id']})!";
+}

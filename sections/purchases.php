@@ -128,7 +128,7 @@ $purchases = getAllPurchasesByFieldName();
                 </div>
                 <div>
                     <button class="changer" data-task="change" data-api_method="updatePurchase" data-id="<?=$item['id'] ?>">CHANGE</button>
-                    <button class="deleter" title="delete the course" data-id=<?= $item['id']?> data-api_method="delCoupon">del</button>
+                    <button class="deleter" title="delete the purchase" data-id=<?= $item['id']?> data-api_method="delPurchase">del</button>
                 </div>
             </div>
         </details>

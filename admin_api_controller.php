@@ -76,6 +76,9 @@ try {
                 printResult(registerPurchase($connect, $_POST));
             }
             break;
+        case 'delPurchase':
+            printResult(delPurchase($connect, (int) $_POST['id']));
+            break;
     }
 } catch (Throwable $e) {
     printError([
